@@ -23,6 +23,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -221,7 +222,11 @@ public abstract class PanelView extends FrameLayout {
                 || (mMotionAborted && event.getActionMasked() != MotionEvent.ACTION_DOWN)) {
             return false;
         }
-
+        
+        if(!SystemProperties.getBoolean("persist.qsm", false)){
+            return false;
+        }
+        
         /*
          * We capture touch events here and update the expand height here in case according to
          * the users fingers. This also handles multi-touch.
