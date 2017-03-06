@@ -15,7 +15,7 @@
  */
 
 package com.android.systemui.qs.tiles;
-
+import android.os.SystemProperties;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
@@ -74,7 +74,8 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
         // Work around for bug 15916487: don't show location tile on top of lock screen. After the
         // bug is fixed, this should be reverted to only hiding it on secure lock screens:
         // state.visible = !(mKeyguard.isSecure() && mKeyguard.isShowing());
-        state.visible = !mKeyguard.isShowing();
+        //state.visible = !mKeyguard.isShowing();
+        state.visible = !mKeyguard.isShowing() && SystemProperties.getBoolean("persist.qsm.locate", false);
         state.value = locationEnabled;
         if (locationEnabled) {
             state.icon = mEnable;

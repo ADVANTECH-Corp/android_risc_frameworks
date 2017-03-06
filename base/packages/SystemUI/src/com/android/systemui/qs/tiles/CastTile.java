@@ -18,6 +18,7 @@ package com.android.systemui.qs.tiles;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -92,8 +93,10 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.visible = !mKeyguard.isSecure() || !mKeyguard.isShowing()
-                || mKeyguard.canSkipBouncer();
+        //state.visible = !mKeyguard.isSecure() || !mKeyguard.isShowing()
+        //        || mKeyguard.canSkipBouncer();
+        state.visible = (!mKeyguard.isSecure() || !mKeyguard.isShowing()
+                || mKeyguard.canSkipBouncer()) && SystemProperties.getBoolean("persist.qsm.cast", false);
         state.label = mContext.getString(R.string.quick_settings_cast_title);
         state.value = false;
         state.autoMirrorDrawable = false;

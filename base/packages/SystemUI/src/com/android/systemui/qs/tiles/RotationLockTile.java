@@ -17,7 +17,7 @@
 package com.android.systemui.qs.tiles;
 
 import android.content.res.Configuration;
-
+import android.os.SystemProperties;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
@@ -72,7 +72,8 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
         final boolean rotationLocked = arg != null ? ((UserBoolean) arg).value
                 : mController.isRotationLocked();
         final boolean userInitiated = arg != null ? ((UserBoolean) arg).userInitiated : false;
-        state.visible = mController.isRotationLockAffordanceVisible();
+        //state.visible = mController.isRotationLockAffordanceVisible();
+        state.visible = mController.isRotationLockAffordanceVisible() && SystemProperties.getBoolean("persist.qsm.rotate", false);
         if (state.value == rotationLocked && state.contentDescription != null) {
             // No change and initialized, no need to update all the values.
             return;

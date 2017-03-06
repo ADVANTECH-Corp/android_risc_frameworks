@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.view.LayoutInflater;
@@ -126,7 +127,8 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         final boolean newValue = zen != Global.ZEN_MODE_OFF;
         final boolean valueChanged = state.value != newValue;
         state.value = newValue;
-        state.visible = isVisible(mContext);
+        //state.visible = isVisible(mContext);
+        state.visible = isVisible(mContext) && SystemProperties.getBoolean("persist.qsm.dnd", false);
         switch (zen) {
             case Global.ZEN_MODE_IMPORTANT_INTERRUPTIONS:
                 state.icon = ResourceIcon.get(R.drawable.ic_qs_dnd_on);

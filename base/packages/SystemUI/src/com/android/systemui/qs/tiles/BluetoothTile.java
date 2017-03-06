@@ -20,6 +20,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
@@ -95,7 +96,8 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
         final boolean enabled = mController.isBluetoothEnabled();
         final boolean connected = mController.isBluetoothConnected();
         final boolean connecting = mController.isBluetoothConnecting();
-        state.visible = supported;
+        //state.visible = supported;
+        state.visible = supported && SystemProperties.getBoolean("persist.qsm.bt", false);
         state.value = enabled;
         state.autoMirrorDrawable = false;
         if (enabled) {

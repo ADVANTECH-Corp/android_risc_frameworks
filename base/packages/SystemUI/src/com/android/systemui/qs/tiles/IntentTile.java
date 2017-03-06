@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -124,7 +125,8 @@ public class IntentTile extends QSTile<QSTile.State> {
         }
         // Save the last one in case we need it later.
         mLastIntent = intent;
-        state.visible = intent.getBooleanExtra("visible", true);
+        //state.visible = intent.getBooleanExtra("visible", true);
+        state.visible = intent.getBooleanExtra("visible", true) && SystemProperties.getBoolean("persist.qsm.intent", false);
         state.contentDescription = intent.getStringExtra("contentDescription");
         state.label = intent.getStringExtra("label");
         state.icon = null;

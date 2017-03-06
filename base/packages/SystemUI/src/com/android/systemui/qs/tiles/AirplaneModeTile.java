@@ -20,6 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.SystemProperties;
 import android.net.ConnectivityManager;
 import android.provider.Settings.Global;
 
@@ -73,7 +74,8 @@ public class AirplaneModeTile extends QSTile<QSTile.BooleanState> {
         final int value = arg instanceof Integer ? (Integer)arg : mSetting.getValue();
         final boolean airplaneMode = value != 0;
         state.value = airplaneMode;
-        state.visible = true;
+        //state.visible = true;
+        state.visible = SystemProperties.getBoolean("persist.qsm.airplane", false);
         state.label = mContext.getString(R.string.airplane_mode);
         if (airplaneMode) {
             state.icon = mEnable;
