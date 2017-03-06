@@ -64,6 +64,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.Vibrator;
@@ -664,6 +665,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mStatusBarWindow = (StatusBarWindowView) View.inflate(context,
                 R.layout.super_status_bar, null);
+        if(!SystemProperties.getBoolean("persist.statusbar", false)){
+            mStatusBarWindow.setVisibility(View.INVISIBLE);
+        }
         mStatusBarWindow.setService(this);
         mStatusBarWindow.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -2475,7 +2479,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (wasRecentsVisible) {
                 mSystemUiVisibility |= View.RECENT_APPS_VISIBLE;
             }
-
+            if(!SystemProperties.getBoolean("persist.statusbar", false)){
+                return;
+            }
             // send updated sysui visibility to window manager
             notifyUiVisibilityChanged(mSystemUiVisibility);
         }
