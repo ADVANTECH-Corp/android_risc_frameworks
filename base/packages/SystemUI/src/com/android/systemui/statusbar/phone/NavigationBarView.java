@@ -32,6 +32,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -343,9 +344,12 @@ public class NavigationBarView extends LinearLayout {
             disableRecent = false;
         }
 
-        getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
-        getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
-        getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
+        //getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
+        //getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
+        //getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
+        getBackButton().setVisibility((SystemProperties.getBoolean("persist.navbar.back", false)) ? View.VISIBLE : View.INVISIBLE);
+        getHomeButton().setVisibility((SystemProperties.getBoolean("persist.navbar.home", false)) ? View.VISIBLE : View.INVISIBLE);
+        getRecentsButton().setVisibility((SystemProperties.getBoolean("persist.navbar.recent", false)) ? View.VISIBLE : View.INVISIBLE);
     }
 
     private boolean inLockTask() {
