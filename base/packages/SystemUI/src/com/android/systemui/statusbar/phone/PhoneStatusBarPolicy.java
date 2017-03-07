@@ -30,6 +30,7 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IRemoteCallback;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings.Global;
@@ -192,7 +193,9 @@ public class PhoneStatusBarPolicy implements Callback {
         final boolean zenNone = mZen == Global.ZEN_MODE_NO_INTERRUPTIONS;
         mService.setIcon(SLOT_ALARM_CLOCK, zenNone ? R.drawable.stat_sys_alarm_dim
                 : R.drawable.stat_sys_alarm, 0, null);
-        mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm);
+        //mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm);
+        boolean isPropertyAlarm = SystemProperties.getBoolean("persist.sb.ic.alarm_clock", false);
+        mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm && isPropertyAlarm);
     }
 
     private final void updateSimState(Intent intent) {
@@ -265,7 +268,8 @@ public class PhoneStatusBarPolicy implements Callback {
             mService.setIcon(SLOT_ZEN, zenIconId, 0, zenDescription);
         }
         if (zenVisible != mZenVisible) {
-            mService.setIconVisibility(SLOT_ZEN, zenVisible);
+            //mService.setIconVisibility(SLOT_ZEN, zenVisible);
+            mService.setIconVisibility(SLOT_ZEN, zenVisible && SystemProperties.getBoolean("persist.sb.ic.zen", false));
             mZenVisible = zenVisible;
         }
 
@@ -273,7 +277,8 @@ public class PhoneStatusBarPolicy implements Callback {
             mService.setIcon(SLOT_VOLUME, volumeIconId, 0, volumeDescription);
         }
         if (volumeVisible != mVolumeVisible) {
-            mService.setIconVisibility(SLOT_VOLUME, volumeVisible);
+            //mService.setIconVisibility(SLOT_VOLUME, volumeVisible);
+            mService.setIconVisibility(SLOT_VOLUME, volumeVisible && SystemProperties.getBoolean("persist.sb.ic.volume", false));
             mVolumeVisible = volumeVisible;
         }
         updateAlarm();
@@ -303,7 +308,8 @@ public class PhoneStatusBarPolicy implements Callback {
         }
 
         mService.setIcon(SLOT_BLUETOOTH, iconId, 0, contentDescription);
-        mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled);
+        //mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled);
+        mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled && SystemProperties.getBoolean("persist.sb.ic.bluetooth", false));
     }
 
     private final void updateTTY(Intent intent) {
@@ -318,7 +324,8 @@ public class PhoneStatusBarPolicy implements Callback {
             if (DEBUG) Log.v(TAG, "updateTTY: set TTY on");
             mService.setIcon(SLOT_TTY, R.drawable.stat_sys_tty_mode, 0,
                     mContext.getString(R.string.accessibility_tty_enabled));
-            mService.setIconVisibility(SLOT_TTY, true);
+            //mService.setIconVisibility(SLOT_TTY, true);
+            mService.setIconVisibility(SLOT_TTY, SystemProperties.getBoolean("persist.sb.ic.tty", false));
         } else {
             // TTY is off
             if (DEBUG) Log.v(TAG, "updateTTY: set TTY off");
@@ -340,7 +347,8 @@ public class PhoneStatusBarPolicy implements Callback {
         if (isCasting) {
             mService.setIcon(SLOT_CAST, R.drawable.stat_sys_cast, 0,
                     mContext.getString(R.string.accessibility_casting));
-            mService.setIconVisibility(SLOT_CAST, true);
+            //mService.setIconVisibility(SLOT_CAST, true);
+            mService.setIconVisibility(SLOT_CAST, SystemProperties.getBoolean("persist.sb.ic.cast", false));
         } else {
             // don't turn off the screen-record icon for a few seconds, just to make sure the user
             // has seen it
@@ -373,7 +381,8 @@ public class PhoneStatusBarPolicy implements Callback {
                 + " mKeyguardVisible: " + mKeyguardVisible);
         boolean showIcon = mManagedProfileFocused && !mKeyguardVisible;
         if (mManagedProfileIconVisible != showIcon) {
-            mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon);
+            //mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon);
+            mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon && SystemProperties.getBoolean("persist.sb.ic.managed_profile", false));
             mManagedProfileIconVisible = showIcon;
         }
     }
@@ -400,7 +409,8 @@ public class PhoneStatusBarPolicy implements Callback {
     private final HotspotController.Callback mHotspotCallback = new HotspotController.Callback() {
         @Override
         public void onHotspotChanged(boolean enabled) {
-            mService.setIconVisibility(SLOT_HOTSPOT, enabled);
+            //mService.setIconVisibility(SLOT_HOTSPOT, enabled);
+            mService.setIconVisibility(SLOT_HOTSPOT, enabled && SystemProperties.getBoolean("persist.sb.ic.hotspot", false));
         }
     };
 
