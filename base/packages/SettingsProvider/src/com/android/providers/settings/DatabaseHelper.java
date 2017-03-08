@@ -2387,8 +2387,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadDefaultAnimationSettings(stmt);
 
-            loadBooleanSetting(stmt, Settings.System.ACCELEROMETER_ROTATION,
-                    R.bool.def_accelerometer_rotation);
+            //loadBooleanSetting(stmt, Settings.System.ACCELEROMETER_ROTATION,
+            //        R.bool.def_accelerometer_rotation);
+            loadBooleanSettingFromCust(stmt, Settings.System.ACCELEROMETER_ROTATION,
+                            R.bool.def_lockscreen_disabled, "def.accelerometer_rotation");
 
             loadDefaultHapticSettings(stmt);
 
