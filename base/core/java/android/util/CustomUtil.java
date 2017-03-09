@@ -35,7 +35,9 @@ public class CustomUtil{
         } catch (IOException ex) {
             Log.e(TAG, ex.getMessage());
         }
-        
+        if(mPpropertys == null){
+            return null;
+        }
         String[] propertys = mPpropertys.split("[\r\n]+");
 		for(String property:propertys){
 			if(!property.contains("|"))
@@ -49,6 +51,8 @@ public class CustomUtil{
 	}
     
     private static String FileRead(String filename) throws IOException{
+        return null;
+        /*
         FileInputStream fis = new FileInputStream (new File(filename));
         byte[] b=new byte[fis.available()];
         ByteArrayOutputStream buffer=new ByteArrayOutputStream();
@@ -61,6 +65,6 @@ public class CustomUtil{
       
         buffer.close();
         fis.close();
-        return new String(data);
+        return new String(data);*/
     }
 }
