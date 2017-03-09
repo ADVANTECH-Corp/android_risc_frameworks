@@ -28,7 +28,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.view.View;
-import android.util.CustomUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -818,13 +817,7 @@ public final class Configuration implements Parcelable, Comparable<Configuration
      * Set this object to the system defaults.
      */
     public void setToDefaults() {
-        //fontScale = 1;
-        String keyValue = CustomUtil.getValue("def.font_size");
-        if (keyValue == null || keyValue.isEmpty()) {
-            fontScale = Float.parseFloat(keyValue);
-        } else {
-            fontScale = 1;
-        }
+        fontScale = 1;
         mcc = mnc = 0;
         locale = null;
         userSetLocale = false;
