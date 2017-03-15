@@ -223,7 +223,7 @@ public abstract class PanelView extends FrameLayout {
             return false;
         }
         
-        if(isFullyCollapsed() && !SystemProperties.getBoolean("persist.qsm", false)){
+        if(!SystemProperties.getBoolean("persist.qsm", false)){
             return false;
         }
         
