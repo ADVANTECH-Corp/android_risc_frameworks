@@ -235,6 +235,10 @@ public class NavigationBarView extends LinearLayout {
     public View getCurrentView() {
         return mCurrentView;
     }
+    
+    public View getCustomButton() {
+        return mCurrentView.findViewById(R.id.custom_button);
+    }
 
     public View getRecentsButton() {
         return mCurrentView.findViewById(R.id.recent_apps);
@@ -350,6 +354,7 @@ public class NavigationBarView extends LinearLayout {
         getBackButton().setVisibility((SystemProperties.getBoolean("persist.navbar.back", false)) ? View.VISIBLE : View.INVISIBLE);
         getHomeButton().setVisibility((SystemProperties.getBoolean("persist.navbar.home", false)) ? View.VISIBLE : View.INVISIBLE);
         getRecentsButton().setVisibility((SystemProperties.getBoolean("persist.navbar.recent", false)) ? View.VISIBLE : View.INVISIBLE);
+        getCustomButton().setVisibility((SystemProperties.getBoolean("persist.navbar.custom", false)) ? View.VISIBLE : View.INVISIBLE);
     }
 
     private boolean inLockTask() {

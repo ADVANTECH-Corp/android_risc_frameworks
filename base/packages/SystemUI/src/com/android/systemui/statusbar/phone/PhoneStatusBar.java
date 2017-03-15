@@ -28,6 +28,7 @@ import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -1073,6 +1074,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             toggleRecentApps();
         }
     };
+    
+    private View.OnClickListener mCustomButtomClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            awakenDreams();
+            String pkg = SystemProperties.get("persist.navbar.btn.pkg_name", null);
+            String act = SystemProperties.get("persist.navbar.btn.act_name", null);
+            if( pkg == null || act == null){
+                return;
+            }
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(pkg, act));
+            startActivity(intent, true);
+        }
+    };
 
     private long mLastLockToAppLongPress;
     private View.OnLongClickListener mLongPressBackRecentsListener =
@@ -1125,7 +1140,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
-
+        mNavigationBarView.getCustomButton().setOnClickListener(mCustomButtomClickListener);
         mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
         mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
         mNavigationBarView.getRecentsButton().setLongClickable(true);

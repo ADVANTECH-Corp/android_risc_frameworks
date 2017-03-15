@@ -74,6 +74,14 @@
                 android:scaleType="center"
                 android:contentDescription="@string/accessibility_recent"
                 />
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/custom_button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_sysbar_custom"
+                android:layout_weight="1"
+                android:scaleType="center"
+                android:contentDescription="@string/accessibility_custom_buttom"
+                />
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -147,6 +155,21 @@
                 android:scaleType="center"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                />
+            <ImageView
+                android:layout_width="@dimen/navigation_key_width"
+                android:layout_marginEnd="@dimen/navigation_side_padding"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_lights_out_dot_small"
+                android:scaleType="center"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
                 />
         </LinearLayout>
 
@@ -252,6 +275,21 @@
                 android:layout_weight="0"
                 android:visibility="invisible"
                 />
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/custom_button"
+                android:layout_height="@dimen/navigation_key_width"
+                android:layout_width="match_parent"
+                android:src="@drawable/ic_sysbar_custom"
+                android:scaleType="center"
+                systemui:keyCode="4"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
+                />
+            <View
+                android:layout_height="@dimen/navigation_side_padding"
+                android:layout_width="match_parent"
+                android:layout_weight="0"
+                android:visibility="invisible"
+                />
         </LinearLayout>
 
         <!-- lights out layout to match exactly -->
@@ -299,6 +337,21 @@
                 android:scaleType="center"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_back"
+                />
+             <View
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                />
+            <ImageView
+                android:layout_height="@dimen/navigation_key_width"
+                android:layout_marginBottom="@dimen/navigation_side_padding"
+                android:layout_width="match_parent"
+                android:src="@drawable/ic_sysbar_lights_out_dot_small"
+                android:scaleType="center"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
                 />
         </LinearLayout>
 
