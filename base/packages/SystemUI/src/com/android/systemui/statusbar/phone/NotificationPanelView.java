@@ -714,7 +714,8 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(mStatusBarState == StatusBarState.SHADE && !SystemProperties.getBoolean("persist.qsm", false)){
+        int prop = SystemProperties.getInt("persist.qsm", 0);
+        if(mStatusBarState == StatusBarState.SHADE && prop == 2){
             return false;
         }
         if (mBlockTouches) {

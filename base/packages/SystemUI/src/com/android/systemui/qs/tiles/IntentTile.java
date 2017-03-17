@@ -126,7 +126,8 @@ public class IntentTile extends QSTile<QSTile.State> {
         // Save the last one in case we need it later.
         mLastIntent = intent;
         //state.visible = intent.getBooleanExtra("visible", true);
-        state.visible = intent.getBooleanExtra("visible", true) && SystemProperties.getBoolean("persist.qsm.intent", false);
+        int prop = SystemProperties.getInt("persist.qsm.intent", 0);
+        state.visible = intent.getBooleanExtra("visible", true) && (prop == 2 ? false : true);
         state.contentDescription = intent.getStringExtra("contentDescription");
         state.label = intent.getStringExtra("label");
         state.icon = null;

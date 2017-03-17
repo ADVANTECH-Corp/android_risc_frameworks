@@ -92,7 +92,8 @@ public class CellularTile extends QSTile<QSTile.SignalState> {
     @Override
     protected void handleUpdateState(SignalState state, Object arg) {
         //state.visible = mController.hasMobileDataFeature();
-        state.visible = mController.hasMobileDataFeature() && SystemProperties.getBoolean("persist.qsm.cell", false);
+        int prop = SystemProperties.getInt("persist.qsm.cell", 0);
+        state.visible = mController.hasMobileDataFeature() && (prop == 2 ? false : true);
         if (!state.visible) return;
         CallbackInfo cb = (CallbackInfo) arg;
         if (cb == null) {

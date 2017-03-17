@@ -111,7 +111,8 @@ public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
         final int value = arg instanceof Integer ? (Integer) arg : mSetting.getValue();
         final boolean enabled = value != 0;
         //state.visible = enabled || mUsageTracker.isRecentlyUsed();
-        state.visible = enabled || mUsageTracker.isRecentlyUsed() && SystemProperties.getBoolean("persist.qsm.clrinv", false);
+        int prop = SystemProperties.getInt("persist.qsm.clrinv", 0);
+        state.visible = enabled || mUsageTracker.isRecentlyUsed() && (prop == 2 ? false : true);
         state.value = enabled;
         state.label = mContext.getString(R.string.quick_settings_inversion_label);
         state.icon = enabled ? mEnable : mDisable;

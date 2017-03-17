@@ -351,10 +351,16 @@ public class NavigationBarView extends LinearLayout {
         //getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
         //getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
         //getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
-        getBackButton().setVisibility((SystemProperties.getBoolean("persist.navbar.back", false)) ? View.VISIBLE : View.INVISIBLE);
-        getHomeButton().setVisibility((SystemProperties.getBoolean("persist.navbar.home", false)) ? View.VISIBLE : View.INVISIBLE);
-        getRecentsButton().setVisibility((SystemProperties.getBoolean("persist.navbar.recent", false)) ? View.VISIBLE : View.INVISIBLE);
-        getCustomButton().setVisibility((SystemProperties.getBoolean("persist.navbar.custom", false)) ? View.VISIBLE : View.INVISIBLE);
+        setButtonVisible(getBackButton(), "persist.navbar.back");
+        setButtonVisible(getHomeButton(), "persist.navbar.home");
+        setButtonVisible(getRecentsButton(), "persist.navbar.recent");
+        int prop = SystemProperties.getInt("persist.navbar.custom", 0);
+        getCustomButton().setVisibility(prop == 1 ? View.VISIBLE : View.GONE);
+    }
+    
+    private void setButtonVisible(View view, String property){
+        int prop = SystemProperties.getInt(property, 0);
+        view.setVisibility(prop == 2 ? View.GONE : View.VISIBLE);
     }
 
     private boolean inLockTask() {
