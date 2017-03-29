@@ -819,7 +819,8 @@ public final class Configuration implements Parcelable, Comparable<Configuration
      */
     public void setToDefaults() {
         //fontScale = 1;
-        fontScale = SystemProperties.getInt("def.font_size", 1);
+        String sFont = SystemProperties.get("persist.def.font_size", "1");
+        fontScale = Float.valueOf(sFont).floatValue();
         mcc = mnc = 0;
         locale = null;
         userSetLocale = false;
