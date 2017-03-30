@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 
+/**
+ * Customization Utility Class
+ *
+ * {@hide}
+ */
 public class CustomUtil{
     
     private final static String TAG = "CustomUtil";
@@ -51,8 +56,6 @@ public class CustomUtil{
 	}
     
     private static String FileRead(String filename) throws IOException{
-        return null;
-        /*
         FileInputStream fis = new FileInputStream (new File(filename));
         byte[] b=new byte[fis.available()];
         ByteArrayOutputStream buffer=new ByteArrayOutputStream();
@@ -65,6 +68,6 @@ public class CustomUtil{
       
         buffer.close();
         fis.close();
-        return new String(data);*/
+        return new String(data);
     }
 }
