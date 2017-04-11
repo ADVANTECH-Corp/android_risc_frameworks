@@ -19,6 +19,7 @@ package com.android.systemui.statusbar.phone;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -105,6 +106,10 @@ public class KeyguardStatusBarView extends RelativeLayout
             removeView(mMultiUserSwitch);
         }
         mBatteryLevel.setVisibility(mBatteryCharging ? View.VISIBLE : View.GONE);
+        int prop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+        if(prop != 0){
+            mBatteryLevel.setVisibility(prop == 1 ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void updateSystemIconsLayoutParams() {

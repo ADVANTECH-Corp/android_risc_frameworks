@@ -27,6 +27,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.MathUtils;
 import android.util.TypedValue;
@@ -341,6 +342,10 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
         mEmergencyCallsOnly.setVisibility(mExpanded && mShowEmergencyCallsOnly ? VISIBLE : GONE);
         mBatteryLevel.setVisibility(mExpanded ? View.VISIBLE : View.GONE);
+        int prop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+        if(prop != 0){
+            mBatteryLevel.setVisibility(prop == 1 ? View.VISIBLE : View.GONE);
+        }
         mSettingsContainer.findViewById(R.id.tuner_icon).setVisibility(
                 TunerService.isTunerEnabled(mContext) ? View.VISIBLE : View.INVISIBLE);
     }

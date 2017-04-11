@@ -34,6 +34,7 @@ import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
@@ -163,6 +164,10 @@ public class BatteryMeterView extends View implements DemoMode,
         mLightModeBackgroundColor =
                 context.getColor(R.color.light_mode_icon_color_dual_tone_background);
         mLightModeFillColor = context.getColor(R.color.light_mode_icon_color_dual_tone_fill);
+        int prop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+        if(prop != 0){
+            setVisibility(prop == 1 ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override
