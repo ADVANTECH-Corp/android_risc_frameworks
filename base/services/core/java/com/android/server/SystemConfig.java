@@ -322,7 +322,9 @@ public class SystemConfig {
                         //Log.i(TAG, "Got feature " + fname);
                         FeatureInfo fi = new FeatureInfo();
                         fi.name = fname;
-                        mAvailableFeatures.put(fname, fi);
+                        if(restrictFromProperty(fname)){
+                            mAvailableFeatures.put(fname, fi);
+                        }
                     }
                     XmlUtils.skipCurrentTag(parser);
                     continue;
@@ -400,7 +402,24 @@ public class SystemConfig {
             }
         }
     }
-
+    
+    private final String[][] gFeatureData = {{"bluetooth", "persist.feature.bluetooth"}};
+    boolean restrictFromProperty(String fname){
+        for(String[] feature : gFeatureData){
+            boolean hasFeature = fname.contains(feature[0]);
+            if(!hasFeature){ //ignore we don't care
+                continue;
+            } else {
+                int prop = SystemProperties.getInt(feature[1], 0);
+                if(prop!=0){
+                    return (prop == 1 ? true : false);
+                }
+                return true; //no property
+            }
+        }
+        return true;
+    }
+    
     void readPermission(XmlPullParser parser, String name)
             throws IOException, XmlPullParserException {
         if (mPermissions.containsKey(name)) {
