@@ -22,10 +22,12 @@ import static android.content.pm.PackageManager.INTENT_FILTER_DOMAIN_VERIFICATIO
 import static android.content.pm.PackageManager.INTENT_FILTER_DOMAIN_VERIFICATION_STATUS_ALWAYS_ASK;
 import static android.content.pm.PackageManager.INTENT_FILTER_DOMAIN_VERIFICATION_STATUS_NEVER;
 
+import android.app.admin.IDevicePolicyManager;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
 import android.app.PackageInstallObserver;
+import android.content.Context;
 import android.content.ComponentName;
 import android.content.IIntentReceiver;
 import android.content.IIntentSender;
@@ -1146,6 +1148,17 @@ public final class Pm {
                 }
                 if (obs.result == PackageManager.INSTALL_SUCCEEDED) {
                     System.out.println("Success");
+                    //[CTS]Add cts package to DevicePolicyManager - begin
+                    if (null!=mPm.getPackageInfo("android.deviceadmin.cts", 0, userId)) {
+                        try {
+                            IDevicePolicyManager dpm = IDevicePolicyManager.Stub.asInterface(ServiceManager.getService(Context.DEVICE_POLICY_SERVICE));
+                            dpm.setActiveAdmin(new ComponentName("android.deviceadmin.cts", "android.deviceadmin.cts.CtsDeviceAdminReceiver"), true, UserHandle.USER_OWNER);
+                            dpm.setActiveAdmin(new ComponentName("android.deviceadmin.cts", "android.deviceadmin.cts.CtsDeviceAdminReceiver2"), true, UserHandle.USER_OWNER);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //[CTS]Add cts package to DevicePolicyManager - end
                     return 0;
                 } else {
                     System.err.println("Failure ["
