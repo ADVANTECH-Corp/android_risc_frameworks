@@ -602,6 +602,15 @@ public final class SystemServer {
                     false);
         } catch (RemoteException e) {
         }
+        
+        // jinxin added to support ota service
+        try {
+        	Slog.i(TAG, "AdvOta Service");
+                ServiceManager.addService("advota", new AdvOtaService(context));
+        } catch (Throwable e) {
+                reportWtf("starting AdvOta Service", e);
+        }
+        //
 
         if (mFactoryTestMode != FactoryTest.FACTORY_TEST_LOW_LEVEL) {
             if (!disableNonCoreServices) {

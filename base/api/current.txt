@@ -23060,6 +23060,16 @@ package android.os {
     method public boolean quitSafely();
   }
 
+  public abstract interface IAdvOtaService implements android.os.IInterface {
+  }
+
+  public static abstract class IAdvOtaService.Stub extends android.os.Binder implements android.os.IAdvOtaService {
+    ctor public IAdvOtaService.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.os.IAdvOtaService asInterface(android.os.IBinder);
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
+  }
+
   public abstract interface IBinder {
     method public abstract void dump(java.io.FileDescriptor, java.lang.String[]) throws android.os.RemoteException;
     method public abstract void dumpAsync(java.io.FileDescriptor, java.lang.String[]) throws android.os.RemoteException;
@@ -23478,6 +23488,8 @@ package android.os {
 
   public class RecoverySystem {
     method public static void installPackage(android.content.Context, java.io.File) throws java.io.IOException;
+    method public static void rebootSystemBackup(android.content.Context) throws java.io.IOException;
+    method public static void rebootSystemRestore(android.content.Context) throws java.io.IOException;
     method public static void rebootWipeCache(android.content.Context) throws java.io.IOException;
     method public static void rebootWipeUserData(android.content.Context) throws java.io.IOException;
     method public static void verifyPackage(java.io.File, android.os.RecoverySystem.ProgressListener, java.io.File) throws java.security.GeneralSecurityException, java.io.IOException;

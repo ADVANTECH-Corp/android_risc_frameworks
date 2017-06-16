@@ -454,6 +454,16 @@ public class RecoverySystem {
         final String localeArg = "--locale=" + Locale.getDefault().toString();
         bootCommand(context, "--wipe_cache", reasonArg, localeArg);
     }
+    
+    // jinxin added
+    public static void rebootSystemBackup(Context context) throws IOException {
+        bootCommand(context, "--system_backup\n--locale=" + Locale.getDefault().toString());
+    }
+
+    public static void rebootSystemRestore(Context context) throws IOException {
+        bootCommand(context, "--system_restore\n--locale=" + Locale.getDefault().toString());
+    }
+    // jinxin emnd
 
     /**
      * Reboot into the recovery system with the supplied argument.
