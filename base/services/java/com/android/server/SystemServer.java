@@ -611,6 +611,14 @@ public final class SystemServer {
                 reportWtf("starting AdvOta Service", e);
         }
         //
+	// jinxin added to support advsdk service
+        try {
+                Slog.i(TAG, "AdvSdk Service");
+                ServiceManager.addService("advsdk", new AdvSdkService(context));
+        } catch (Throwable e) {
+                reportWtf("starting AdvSdk Service", e);
+        }
+        //
 
         if (mFactoryTestMode != FactoryTest.FACTORY_TEST_LOW_LEVEL) {
             if (!disableNonCoreServices) {
