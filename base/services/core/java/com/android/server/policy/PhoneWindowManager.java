@@ -5486,7 +5486,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     };
 
     private void requestTransientBars(WindowState swipeTarget) {
-        if (SystemProperties.getInt("persist.sb.immersive", 0) == 1) {
+        if (SystemProperties.getInt("persist.sb.immersive", 0) == 1) {//for kiosk mode using
             return;
         }
         synchronized (mWindowManagerFuncs.getWindowManagerLock()) {
