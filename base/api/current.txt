@@ -23070,6 +23070,18 @@ package android.os {
     method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
   }
 
+  public abstract interface IAdvSdkService implements android.os.IInterface {
+    method public abstract void setBrightness(int) throws android.os.RemoteException;
+    method public abstract boolean setWifiTethering(boolean) throws android.os.RemoteException;
+  }
+
+  public static abstract class IAdvSdkService.Stub extends android.os.Binder implements android.os.IAdvSdkService {
+    ctor public IAdvSdkService.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.os.IAdvSdkService asInterface(android.os.IBinder);
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
+  }
+
   public abstract interface IBinder {
     method public abstract void dump(java.io.FileDescriptor, java.lang.String[]) throws android.os.RemoteException;
     method public abstract void dumpAsync(java.io.FileDescriptor, java.lang.String[]) throws android.os.RemoteException;

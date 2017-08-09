@@ -55,23 +55,45 @@ import android.view.WindowManager;
 import android.provider.Settings;
 import android.content.ContentResolver;
 
-import  android.os.PowerManager;
+import android.os.IPowerManager;
+import android.os.PowerManager;
 import android.os.SystemClock;
+import android.provider.Settings;
+import android.app.StatusBarManager;
+import android.net.wifi.WifiManager;
+
+import android.view.Window;
+import com.android.internal.widget.LockPatternUtils;
+import android.os.ServiceManager;
+import android.os.RemoteException;
 
 public final class AdvSdkService extends IAdvSdkService.Stub {
     private static final String TAG = "AdvSdk";
 
-    private static final boolean LOCAL_DEBUG = true;//
+    private static final boolean LOCAL_DEBUG = true;
+    private final Context mContext;
+    private final IPowerManager mPowerManager;
 
-    Context mContext = null;
-
-    //service init
+    //AdvSdkService init
     public AdvSdkService(Context context) {
 	mContext = context;
+	mPowerManager = IPowerManager.Stub.asInterface(ServiceManager.getService("power"));
 	Slog.i(TAG, "AdvSdkService init...");
     }
 
-    // Add AdvSdk here ...
-	
-    // ToDo
+    //AdvSdkService api implement
+    public boolean setWifiTethering(boolean enable) {
+        WifiManager wifiManager = (WifiManager) mContext.getSystemService("wifi");
+	return wifiManager.setWifiApEnabled(null, enable);
+    }
+
+    public void setBrightness(int brightness) {
+        try {
+            mPowerManager.setTemporaryScreenBrightnessSettingOverride(brightness);
+        } catch (RemoteException e) {
+            Slog.i(TAG, "Failed to set screen brightness", e);
+        }
+        Settings.System.putIntForUser(mContext.getContentResolver(),"screen_brightness", brightness, -2);
+   }
+
 }
