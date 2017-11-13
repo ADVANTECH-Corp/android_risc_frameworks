@@ -1634,7 +1634,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if(prop == 2){
             mStatusBarHeight = 0;
         }
-
         // Height of the navigation bar when presented horizontally at bottom
         mNavigationBarHeightForRotation[mPortraitRotation] =
         mNavigationBarHeightForRotation[mUpsideDownRotation] =
@@ -3693,7 +3692,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             if (DEBUG_LAYOUT) Slog.i(TAG, String.format("mDock rect: (%d,%d - %d,%d)",
                     mDockLeft, mDockTop, mDockRight, mDockBottom));
-
+            int prop = SystemProperties.getInt("persist.statusbar", 0);
+            final Resources res = mContext.getResources();
+            int barH = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+            mStatusBarHeight = (prop == 2) ? 0 : barH;
             // decide where the status bar goes ahead of time
             if (mStatusBar != null) {
                 // apply any navigation bar insets

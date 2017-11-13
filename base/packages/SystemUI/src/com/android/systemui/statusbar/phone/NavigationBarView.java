@@ -358,14 +358,13 @@ public class NavigationBarView extends LinearLayout {
         getCustomButton().setVisibility(prop == 1 ? View.VISIBLE : View.GONE);
     }
     
-    private void setButtonVisible(View view, boolean disable, String property){
+    private void setButtonVisible(View view, boolean disable, String property){    
         int prop = SystemProperties.getInt(property, 0);
         if (prop == 0) {
             view.setVisibility(disable ? View.INVISIBLE : View.VISIBLE);
         } else {
             view.setVisibility(prop == 2 ? View.GONE : View.VISIBLE);
         }
-        
     }
 
     private boolean inLockTask() {

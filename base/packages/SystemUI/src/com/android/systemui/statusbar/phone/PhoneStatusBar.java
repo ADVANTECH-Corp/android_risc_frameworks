@@ -953,7 +953,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
 
-        return mStatusBarView;
+// nanjie.huang modify start
+        int batteryprop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+        if(batteryprop != 0) {
+            mIconController.setBatteryVisibility( batteryprop != 2 ? true : false);
+        }
+
+        int sbcolorprop = SystemProperties.getInt("persist.statusbar.color", 0);
+        if(sbcolorprop != 0){
+	    mStatusBarView.setBackgroundColor(sbcolorprop);
+        }
+	int navcolorprop = SystemProperties.getInt("persist.navbar.color", 0);
+        if(navcolorprop != 0){
+            mNavigationBarView.setBackgroundColor(navcolorprop);
+        }
+// nanjie.huang modify end
+	
+	return mStatusBarView;
     }
 
     private void clearAllNotifications() {
@@ -1893,8 +1909,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mIconController.showSystemIconArea(animate);
             }
         }
-
-        if ((diff1 & StatusBarManager.DISABLE_CLOCK) != 0) {
+// nanjie.huang modify start
+/*
+	if ((diff1 & StatusBarManager.DISABLE_CLOCK) != 0) {
             boolean visible = (state1 & StatusBarManager.DISABLE_CLOCK) == 0;
             mIconController.setClockVisibility(visible);
         }
@@ -1903,7 +1920,30 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 animateCollapsePanels();
             }
         }
+*/
+	int quicksettingprop = SystemProperties.getInt("persist.statusbar.quicksetting", 0);
+        if(quicksettingprop == 2) {
+            animateCollapsePanels();
+        }
 
+        int clockprop = SystemProperties.getInt("persist.sb.ic.clock", 0);
+        if(clockprop != 0) {
+            mIconController.setClockVisibility(clockprop != 2 ? true : false);
+        }
+
+	int batteryprop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+        if(batteryprop != 0) {
+            mIconController.setBatteryVisibility( batteryprop != 2 ? true : false);
+        }
+	int sbcolorprop = SystemProperties.getInt("persist.statusbar.color", 0);
+        if(sbcolorprop != 0){
+            mStatusBarView.setBackgroundColor(sbcolorprop);
+        }
+	int navcolorprop = SystemProperties.getInt("persist.navbar.color", 0);
+        if(navcolorprop != 0){
+            mNavigationBarView.setBackgroundColor(navcolorprop);
+        }
+// nanjie.huang modify end
         if ((diff1 & (StatusBarManager.DISABLE_HOME
                         | StatusBarManager.DISABLE_RECENT
                         | StatusBarManager.DISABLE_BACK
@@ -2422,6 +2462,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Integer.toHexString(vis), Integer.toHexString(mask),
                 Integer.toHexString(oldVal), Integer.toHexString(newVal),
                 Integer.toHexString(diff)));
+
+        int prop = SystemProperties.getInt("persist.statusbar", 0);
+        mStatusBarView.setVisibility(prop == 2 ? View.INVISIBLE : View.VISIBLE);
+
         if (diff != 0) {
             // we never set the recents bit via this method, so save the prior state to prevent
             // clobbering the bit below
