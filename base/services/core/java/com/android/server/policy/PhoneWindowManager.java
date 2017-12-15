@@ -1630,8 +1630,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mStatusBarHeight =
                 res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-        int prop = SystemProperties.getInt("persist.statusbar", 0);
-        if(prop == 2){
+        if(!SystemProperties.getBoolean("persist.statusbar", true)){
             mStatusBarHeight = 0;
         }
 
@@ -3613,9 +3612,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // it to bubble up from the nav bar, because this needs to
                 // change atomically with screen rotations.
                 boolean hideNavBar = false;
-                int prop = SystemProperties.getInt("persist.navbar", 0);
-                if (prop == 2){
-                        hideNavBar = true;
+                if (!SystemProperties.getBoolean("persist.navbar", true)){
+                    hideNavBar = true;
                 }
                 mNavigationBarOnBottom = (!mNavigationBarCanMove || displayWidth < displayHeight);
                 if (mNavigationBarOnBottom) {

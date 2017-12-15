@@ -354,13 +354,13 @@ public class NavigationBarView extends LinearLayout {
         setButtonVisible(getBackButton(), "persist.navbar.back");
         setButtonVisible(getHomeButton(), "persist.navbar.home");
         setButtonVisible(getRecentsButton(), "persist.navbar.recent");
-        int prop = SystemProperties.getInt("persist.navbar.custom", 0);
-        getCustomButton().setVisibility(prop == 1 ? View.VISIBLE : View.GONE);
+        boolean prop = SystemProperties.getBoolean("persist.navbar.custom", true);
+        getCustomButton().setVisibility(prop ? View.VISIBLE : View.GONE);
     }
     
     private void setButtonVisible(View view, String property){
-        int prop = SystemProperties.getInt(property, 0);
-        view.setVisibility(prop == 2 ? View.GONE : View.VISIBLE);
+        boolean prop = SystemProperties.getBoolean(property, true);
+        view.setVisibility(prop ? View.VISIBLE : View.GONE);
     }
 
     private boolean inLockTask() {

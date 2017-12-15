@@ -683,8 +683,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
-        int prop = SystemProperties.getInt("persist.statusbar", 0);
-        if(prop == 2){
+        if(!SystemProperties.getBoolean("persist.statusbar", true)){
             FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
             mStatusBarView.setLayoutParams(lytp);
         }
