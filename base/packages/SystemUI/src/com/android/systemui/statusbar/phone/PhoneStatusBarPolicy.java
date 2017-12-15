@@ -194,9 +194,8 @@ public class PhoneStatusBarPolicy implements Callback {
         mService.setIcon(SLOT_ALARM_CLOCK, zenNone ? R.drawable.stat_sys_alarm_dim
                 : R.drawable.stat_sys_alarm, 0, null);
         //mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm);
-        int prop = SystemProperties.getInt("persist.sb.ic.alarm_clock", 0);
-        boolean isPropertyAlarm = (prop == 2 ? false : true);
-        mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm && isPropertyAlarm);
+        boolean prop = SystemProperties.getBoolean("persist.sb.ic.alarm_clock", true);
+        mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm && prop);
     }
 
     private final void updateSimState(Intent intent) {
@@ -270,8 +269,8 @@ public class PhoneStatusBarPolicy implements Callback {
         }
         if (zenVisible != mZenVisible) {
             //mService.setIconVisibility(SLOT_ZEN, zenVisible);
-            int prop = SystemProperties.getInt("persist.sb.ic.zen", 0);
-            mService.setIconVisibility(SLOT_ZEN, zenVisible && (prop == 2 ? false : true));
+            boolean prop = SystemProperties.getBoolean("persist.sb.ic.zen", true);
+            mService.setIconVisibility(SLOT_ZEN, zenVisible && (prop));
             mZenVisible = zenVisible;
         }
 
@@ -280,8 +279,8 @@ public class PhoneStatusBarPolicy implements Callback {
         }
         if (volumeVisible != mVolumeVisible) {
             //mService.setIconVisibility(SLOT_VOLUME, volumeVisible);
-            int prop = SystemProperties.getInt("persist.sb.ic.volume", 0);
-            mService.setIconVisibility(SLOT_VOLUME, volumeVisible && (prop == 2 ? false : true));
+            boolean prop = SystemProperties.getBoolean("persist.sb.ic.volume", true);
+            mService.setIconVisibility(SLOT_VOLUME, volumeVisible && (prop));
             mVolumeVisible = volumeVisible;
         }
         updateAlarm();
@@ -312,8 +311,8 @@ public class PhoneStatusBarPolicy implements Callback {
 
         mService.setIcon(SLOT_BLUETOOTH, iconId, 0, contentDescription);
         //mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled);
-        int prop = SystemProperties.getInt("persist.sb.ic.bluetooth", 0);
-        mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled && (prop == 2 ? false : true));
+        boolean prop = SystemProperties.getBoolean("persist.sb.ic.bluetooth", true);
+        mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled && (prop));
     }
 
     private final void updateTTY(Intent intent) {
@@ -329,8 +328,8 @@ public class PhoneStatusBarPolicy implements Callback {
             mService.setIcon(SLOT_TTY, R.drawable.stat_sys_tty_mode, 0,
                     mContext.getString(R.string.accessibility_tty_enabled));
             //mService.setIconVisibility(SLOT_TTY, true);
-            int prop = SystemProperties.getInt("persist.sb.ic.tty", 0);
-            mService.setIconVisibility(SLOT_TTY, (prop == 2 ? false : true));
+            boolean prop = SystemProperties.getBoolean("persist.sb.ic.tty", true);
+            mService.setIconVisibility(SLOT_TTY, (prop));
         } else {
             // TTY is off
             if (DEBUG) Log.v(TAG, "updateTTY: set TTY off");
@@ -353,8 +352,8 @@ public class PhoneStatusBarPolicy implements Callback {
             mService.setIcon(SLOT_CAST, R.drawable.stat_sys_cast, 0,
                     mContext.getString(R.string.accessibility_casting));
             //mService.setIconVisibility(SLOT_CAST, true);
-            int prop = SystemProperties.getInt("persist.sb.ic.cast", 0);
-            mService.setIconVisibility(SLOT_CAST, (prop == 2 ? false : true));
+            boolean prop = SystemProperties.getBoolean("persist.sb.ic.cast", true);
+            mService.setIconVisibility(SLOT_CAST, prop);
         } else {
             // don't turn off the screen-record icon for a few seconds, just to make sure the user
             // has seen it
@@ -388,8 +387,8 @@ public class PhoneStatusBarPolicy implements Callback {
         boolean showIcon = mManagedProfileFocused && !mKeyguardVisible;
         if (mManagedProfileIconVisible != showIcon) {
             //mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon);
-            int prop = SystemProperties.getInt("persist.sb.ic.managed_profile", 0);
-            mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon && (prop == 2 ? false : true));
+            boolean prop = SystemProperties.getBoolean("persist.sb.ic.managed_profile", true);
+            mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon && (prop));
             mManagedProfileIconVisible = showIcon;
         }
     }
@@ -417,8 +416,8 @@ public class PhoneStatusBarPolicy implements Callback {
         @Override
         public void onHotspotChanged(boolean enabled) {
             //mService.setIconVisibility(SLOT_HOTSPOT, enabled);
-            int prop = SystemProperties.getInt("persist.sb.ic.hotspot", 0);
-            mService.setIconVisibility(SLOT_HOTSPOT, enabled && (prop == 2 ? false : true));
+            boolean prop = SystemProperties.getBoolean("persist.sb.ic.hotspot", true);
+            mService.setIconVisibility(SLOT_HOTSPOT, enabled && prop);
         }
     };
 

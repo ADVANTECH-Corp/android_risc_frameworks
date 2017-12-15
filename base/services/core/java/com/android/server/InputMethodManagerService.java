@@ -1680,8 +1680,8 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
                                 contentDescription  != null
                                         ? contentDescription.toString() : null);
                         //mStatusBar.setIconVisibility("ime", true);
-                        int prop = SystemProperties.getInt("persist.sb.ic.ime", 0);
-                        mStatusBar.setIconVisibility("ime", (prop == 2 ? false : true));
+                        boolean prop = SystemProperties.getBoolean("persist.sb.ic.ime", true);
+                        mStatusBar.setIconVisibility("ime", (prop));
                     }
                 }
             }
