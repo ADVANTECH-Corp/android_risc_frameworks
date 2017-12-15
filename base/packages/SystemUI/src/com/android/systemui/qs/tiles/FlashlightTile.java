@@ -72,8 +72,8 @@ public class FlashlightTile extends QSTile<QSTile.BooleanState> implements
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         //state.visible = mFlashlightController.isAvailable();
-        int prop = SystemProperties.getInt("persist.qsm.flashlight", 0);
-        state.visible = mFlashlightController.isAvailable() && (prop == 2 ? false : true);
+        boolean prop = SystemProperties.getBoolean("persist.qsm.flashlight", true);
+        state.visible = mFlashlightController.isAvailable() && (prop);
         state.label = mHost.getContext().getString(R.string.quick_settings_flashlight_label);
         if (arg instanceof UserBoolean) {
             boolean value = ((UserBoolean) arg).value;

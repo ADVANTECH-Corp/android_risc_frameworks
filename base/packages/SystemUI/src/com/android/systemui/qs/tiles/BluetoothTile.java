@@ -97,8 +97,8 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState>  {
         final boolean connected = mController.isBluetoothConnected();
         final boolean connecting = mController.isBluetoothConnecting();
         //state.visible = supported;
-        int prop = SystemProperties.getInt("persist.qsm.bt", 0);
-        state.visible = supported && (prop == 2 ? false : true);
+        boolean prop = SystemProperties.getBoolean("persist.qsm.bt", true);
+        state.visible = supported && (prop);
         state.value = enabled;
         state.autoMirrorDrawable = false;
         if (enabled) {

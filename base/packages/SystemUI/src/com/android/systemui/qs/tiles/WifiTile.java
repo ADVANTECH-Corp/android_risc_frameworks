@@ -119,8 +119,7 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     @Override
     protected void handleUpdateState(SignalState state, Object arg) {
         //state.visible = true;
-        int prop = SystemProperties.getInt("persist.qsm.wifi", 0);
-        state.visible = (prop == 2 ? false : true);
+        state.visible = SystemProperties.getBoolean("persist.qsm.wifi", true);
         if (DEBUG) Log.d(TAG, "handleUpdateState arg=" + arg);
         CallbackInfo cb = (CallbackInfo) arg;
         if (cb == null) {

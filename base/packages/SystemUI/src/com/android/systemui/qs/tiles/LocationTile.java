@@ -75,8 +75,8 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
         // bug is fixed, this should be reverted to only hiding it on secure lock screens:
         // state.visible = !(mKeyguard.isSecure() && mKeyguard.isShowing());
         //state.visible = !mKeyguard.isShowing();
-        int prop = SystemProperties.getInt("persist.qsm.locate", 0);
-        state.visible = !mKeyguard.isShowing() && (prop == 2 ? false : true);
+        boolean prop = SystemProperties.getBoolean("persist.qsm.locate", true);
+        state.visible = !mKeyguard.isShowing() && (prop);
         state.value = locationEnabled;
         if (locationEnabled) {
             state.icon = mEnable;

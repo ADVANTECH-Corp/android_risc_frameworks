@@ -128,8 +128,7 @@ public class DndTile extends QSTile<QSTile.BooleanState> {
         final boolean valueChanged = state.value != newValue;
         state.value = newValue;
         //state.visible = isVisible(mContext);
-        int prop = SystemProperties.getInt("persist.qsm.dnd", 0);
-        state.visible = isVisible(mContext) && (prop == 2 ? false : true);
+        state.visible = isVisible(mContext) && (SystemProperties.getBoolean("persist.qsm.dnd", true));
         switch (zen) {
             case Global.ZEN_MODE_IMPORTANT_INTERRUPTIONS:
                 state.icon = ResourceIcon.get(R.drawable.ic_qs_dnd_on);

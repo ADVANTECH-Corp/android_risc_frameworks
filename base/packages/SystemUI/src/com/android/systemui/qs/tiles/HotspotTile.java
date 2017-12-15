@@ -89,8 +89,8 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         //state.visible = mController.isHotspotSupported() && mUsageTracker.isRecentlyUsed();
-        int prop = SystemProperties.getInt("persist.qsm.hotspot", 0);
-        state.visible = mController.isHotspotSupported() && mUsageTracker.isRecentlyUsed() && (prop == 2 ? false : true);
+        boolean prop = SystemProperties.getBoolean("persist.qsm.hotspot", true);
+        state.visible = mController.isHotspotSupported() && mUsageTracker.isRecentlyUsed() && (prop);
         state.label = mContext.getString(R.string.quick_settings_hotspot_label);
 
         if (arg instanceof Boolean) {

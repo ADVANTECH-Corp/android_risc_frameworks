@@ -95,9 +95,9 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
     protected void handleUpdateState(BooleanState state, Object arg) {
         //state.visible = !mKeyguard.isSecure() || !mKeyguard.isShowing()
         //        || mKeyguard.canSkipBouncer();
-        int prop = SystemProperties.getInt("persist.qsm.cast", 0);
+        boolean prop = SystemProperties.getBoolean("persist.qsm.cast", true);
         state.visible = (!mKeyguard.isSecure() || !mKeyguard.isShowing()
-                || mKeyguard.canSkipBouncer()) && (prop == 2 ? false : true);
+                || mKeyguard.canSkipBouncer()) && (prop);
         state.label = mContext.getString(R.string.quick_settings_cast_title);
         state.value = false;
         state.autoMirrorDrawable = false;
