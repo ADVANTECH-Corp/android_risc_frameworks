@@ -955,6 +955,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
         setStatusBarBackgroundDrawable();
+        setStatusBarBackgroundColor();
         return mStatusBarView;
     }
 
@@ -968,6 +969,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mStatusBarView.setBackgroundDrawable(drawable);
 			}
 		}
+    }
+
+    private void setStatusBarBackgroundColor(){
+        int clr = SystemProperties.getInt("persist.statusbar.color", 0);
+        if (0!=clr) {
+            mStatusBarView.setBackgroundColor(clr);
+        }
     }
 
     private void clearAllNotifications() {
