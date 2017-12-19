@@ -37,8 +37,10 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -162,6 +164,7 @@ import com.android.systemui.statusbar.stack.StackStateAnimator;
 import com.android.systemui.statusbar.stack.StackViewState;
 import com.android.systemui.volume.VolumeComponent;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -951,8 +954,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
-
+        setStatusBarBackgroundDrawable();
         return mStatusBarView;
+    }
+
+    private void setStatusBarBackgroundDrawable(){
+        String background_pic_path = SystemProperties.get("persist.statusbar.picture", null);
+		if(background_pic_path!=null && !background_pic_path.isEmpty()){
+			File pathToPicture = new File(background_pic_path);
+			if(pathToPicture.exists() && !pathToPicture.isDirectory()) {
+				Bitmap bitmap = BitmapFactory.decodeFile(background_pic_path);
+                Drawable drawable = new BitmapDrawable(mContext.getResources(), bitmap);
+                mStatusBarView.setBackgroundDrawable(drawable);
+			}
+		}
     }
 
     private void clearAllNotifications() {
