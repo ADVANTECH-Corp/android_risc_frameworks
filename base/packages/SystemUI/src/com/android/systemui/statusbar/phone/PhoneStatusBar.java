@@ -956,7 +956,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
         setStatusBarBackgroundDrawable();
         setStatusBarBackgroundColor();
+        setNavigationBarBackgroundDrawable();
         return mStatusBarView;
+    }
+    
+    private void setNavigationBarBackgroundDrawable(){
+        String background_pic_path = SystemProperties.get("persist.navbar.picture", null);
+		if(background_pic_path!=null && !background_pic_path.isEmpty()){
+			File pathToPicture = new File(background_pic_path);
+			if(pathToPicture.exists() && !pathToPicture.isDirectory()) {
+				Bitmap bitmap = BitmapFactory.decodeFile(background_pic_path);
+                Drawable drawable = new BitmapDrawable(mContext.getResources(), bitmap);
+                mNavigationBarView.setBackgroundDrawable(drawable);
+			}
+		}
     }
 
     private void setStatusBarBackgroundDrawable(){
