@@ -957,6 +957,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         setStatusBarBackgroundDrawable();
         setStatusBarBackgroundColor();
         setNavigationBarBackgroundDrawable();
+        setNavigationBarBackgroundColor();
         return mStatusBarView;
     }
     
@@ -970,6 +971,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mNavigationBarView.setBackgroundDrawable(drawable);
 			}
 		}
+    }
+    
+    private void setNavigationBarBackgroundColor(){
+        int clr = SystemProperties.getInt("persist.navbar.color", 0);
+        if (0!=clr) {
+            mNavigationBarView.setBackgroundColor(clr);
+        }
     }
 
     private void setStatusBarBackgroundDrawable(){
