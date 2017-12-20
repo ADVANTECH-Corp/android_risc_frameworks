@@ -686,10 +686,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
-        if(!SystemProperties.getBoolean("persist.statusbar", true)){
-            FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
-            mStatusBarView.setLayoutParams(lytp);
-        }
+
+        FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, getStatusBarHeightFromProperty());
+        mStatusBarView.setLayoutParams(lytp);
+
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
 
@@ -977,6 +977,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mStatusBarView.setBackgroundColor(clr);
         }
     }
+    
+    private int getStatusBarHeightFromProperty()
+    {
+        final Resources res = mContext.getResources();
+        int defaultHeight = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        boolean sbVisible = SystemProperties.getBoolean("persist.statusbar", true);
+        int sbHeight = SystemProperties.getInt("persist.statusbar.height", defaultHeight);
+        if(sbVisible == false || sbHeight == 0){
+            sbHeight = 0;
+        }
+        return sbHeight;
+    }
 
     private void clearAllNotifications() {
 
@@ -1085,8 +1097,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public int getStatusBarHeight() {
         if (mNaturalBarHeight < 0) {
             final Resources res = mContext.getResources();
-            mNaturalBarHeight =
-                    res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+            mNaturalBarHeight = getStatusBarHeightFromProperty();
+                    //res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
         }
         return mNaturalBarHeight;
     }
@@ -3103,7 +3115,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNaturalBarHeight = res.getDimensionPixelSize(
                 com.android.internal.R.dimen.status_bar_height);
-
+        mNaturalBarHeight = getStatusBarHeightFromProperty();
         mRowMinHeight =  res.getDimensionPixelSize(R.dimen.notification_min_height);
         mRowMaxHeight =  res.getDimensionPixelSize(R.dimen.notification_max_height);
 
