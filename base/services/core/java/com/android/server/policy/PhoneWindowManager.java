@@ -3618,6 +3618,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 if (!SystemProperties.getBoolean("persist.navbar", true)){
                     hideNavBar = true;
                 }
+                int navbarH = SystemProperties.getInt("persist.navbar.height", 0);
                 mNavigationBarOnBottom = (!mNavigationBarCanMove || displayWidth < displayHeight);
                 if (mNavigationBarOnBottom) {
                     // It's a system nav bar or a portrait screen; nav bar goes on bottom.
@@ -3625,6 +3626,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             - mNavigationBarHeightForRotation[displayRotation];
                     if(hideNavBar){
                         top = displayHeight - overscanBottom;
+                    } else {
+                        top = displayHeight - overscanBottom - navbarH;
                     }
                     mTmpNavigationFrame.set(0, top, displayWidth, displayHeight - overscanBottom);
                     mStableBottom = mStableFullscreenBottom = mTmpNavigationFrame.top;
@@ -3653,6 +3656,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             - mNavigationBarWidthForRotation[displayRotation];
                     if(hideNavBar){
                         left = displayWidth - overscanRight;
+                    } else {
+                        left = displayWidth - overscanRight - navbarH;
                     }
                     mTmpNavigationFrame.set(left, 0, displayWidth - overscanRight, displayHeight);
                     mStableRight = mStableFullscreenRight = mTmpNavigationFrame.left;
