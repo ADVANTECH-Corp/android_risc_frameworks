@@ -26,6 +26,9 @@ import android.app.StatusBarManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -52,6 +55,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.DeadZone;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -236,8 +240,12 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView;
     }
     
-    public View getCustomButton() {
-        return mCurrentView.findViewById(R.id.custom_button);
+    public View getLeftCustomButton() {
+        return mCurrentView.findViewById(R.id.custom_button_left);
+    }
+    
+    public View getRightCustomButton() {
+        return mCurrentView.findViewById(R.id.custom_button_right);
     }
 
     public View getRecentsButton() {
@@ -354,13 +362,29 @@ public class NavigationBarView extends LinearLayout {
         setButtonVisible(getBackButton(), "persist.navbar.back");
         setButtonVisible(getHomeButton(), "persist.navbar.home");
         setButtonVisible(getRecentsButton(), "persist.navbar.recent");
-        boolean prop = SystemProperties.getBoolean("persist.navbar.custom", true);
-        getCustomButton().setVisibility(prop ? View.VISIBLE : View.GONE);
+        boolean propLeft = SystemProperties.getBoolean("persist.cust.navi.add.left", true);
+        boolean propRight = SystemProperties.getBoolean("persist.cust.navi.add.right", true);
+        getLeftCustomButton().setVisibility(propLeft ? View.VISIBLE : View.GONE);
+        getRightCustomButton().setVisibility(propRight ? View.VISIBLE : View.GONE);
+        setCustomButtonBackgroundDrawable(getLeftCustomButton(), "persist.cust.navi.pic.left");
+        setCustomButtonBackgroundDrawable(getRightCustomButton(), "persist.cust.navi.pic.right");
     }
     
     private void setButtonVisible(View view, String property){
         boolean prop = SystemProperties.getBoolean(property, true);
         view.setVisibility(prop ? View.VISIBLE : View.GONE);
+    }
+    
+    private void setCustomButtonBackgroundDrawable(View view, String property){
+        String background_pic_path = SystemProperties.get(property, null);
+		if(background_pic_path!=null && !background_pic_path.isEmpty()){
+			File pathToPicture = new File(background_pic_path);
+			if(pathToPicture.exists() && !pathToPicture.isDirectory()) {
+				Bitmap bitmap = BitmapFactory.decodeFile(background_pic_path);
+                Drawable drawable = new BitmapDrawable(mContext.getResources(), bitmap);
+                view.setBackgroundDrawable(drawable);
+			}
+		}
     }
 
     private boolean inLockTask() {

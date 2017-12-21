@@ -1131,11 +1131,25 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
     
-    private View.OnClickListener mCustomButtomClickListener = new View.OnClickListener() {
+    private View.OnClickListener mLeftCustomButtomClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             awakenDreams();
-            String pkg = SystemProperties.get("persist.navbar.btn.pkg_name", null);
-            String act = SystemProperties.get("persist.navbar.btn.act_name", null);
+            String pkg = SystemProperties.get("persist.cust.navi.left.pkname", null);
+            String act = SystemProperties.get("persist.cust.navi.left.act", null);
+            if( pkg == null || act == null){
+                return;
+            }
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName(pkg, act));
+            startActivity(intent, true);
+        }
+    };
+    
+    private View.OnClickListener mRightCustomButtomClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            awakenDreams();
+            String pkg = SystemProperties.get("persist.cust.navi.right.pkname", null);
+            String act = SystemProperties.get("persist.cust.navi.right.act", null);
             if( pkg == null || act == null){
                 return;
             }
@@ -1196,7 +1210,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
-        mNavigationBarView.getCustomButton().setOnClickListener(mCustomButtomClickListener);
+        mNavigationBarView.getLeftCustomButton().setOnClickListener(mLeftCustomButtomClickListener);
+        mNavigationBarView.getRightCustomButton().setOnClickListener(mRightCustomButtomClickListener);
         mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
         mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
         mNavigationBarView.getRecentsButton().setLongClickable(true);
