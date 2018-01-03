@@ -2600,8 +2600,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
                         mContext.getResources().getBoolean(R.bool.def_stay_on_while_plugged_in))
                      ? 1 : 0, "persist.def.stay_awake");
 
-            loadIntegerSetting(stmt, Settings.Global.WIFI_SLEEP_POLICY,
-                    R.integer.def_wifi_sleep_policy);
+            //loadIntegerSetting(stmt, Settings.Global.WIFI_SLEEP_POLICY,
+            //        R.integer.def_wifi_sleep_policy);
+            loadIntegerSettingFromCust(stmt, Settings.System.WIFI_SLEEP_POLICY, 
+                    R.integer.def_wifi_sleep_policy, "persist.def.wifi_policy");
 
             loadSetting(stmt, Settings.Global.MODE_RINGER,
                     AudioManager.RINGER_MODE_NORMAL);
