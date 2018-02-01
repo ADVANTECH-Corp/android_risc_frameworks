@@ -72,6 +72,10 @@ public class AdvSdklib {
             totalMemory = 0;
             availMemory = 0;
         }
+        public void initMemoryStatus() {
+            totalMemory = 0;
+            availMemory = 0;
+        }
         public long getTotalMemory() {
             return totalMemory;
 	}
@@ -88,6 +92,14 @@ public class AdvSdklib {
 		String health;
 		String plugged;
 		public BatteryStatus() {
+			voltage = 0;
+			temperature = 0;
+			levelPercent = 0;
+			status = "";
+			health = "";
+			plugged = "";
+		}
+		public void initBatteryStatus() {
 			voltage = 0;
 			temperature = 0;
 			levelPercent = 0;
@@ -215,11 +227,16 @@ public class AdvSdklib {
         if(show){
             showSystemUI(win);
         } else {
+            /*
             decorView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            */
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                     | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
 
@@ -245,11 +262,16 @@ public class AdvSdklib {
         if(show){
             showSystemUI(win);
         } else {
+            /*
             decorView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            */
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                     | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
 
@@ -274,11 +296,17 @@ public class AdvSdklib {
 		SystemProperties.set("persist.statusbar", enabling ? "2" : "1");
 	View decorView = win.getDecorView();
         if(enabling){
+            /*
             decorView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            */
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                     | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                     | View.SYSTEM_UI_FLAG_IMMERSIVE);
         } else {
@@ -300,10 +328,15 @@ public class AdvSdklib {
      */
     private void showSystemUI(Window win){
         View decorView = win.getDecorView();
+/*
+	Log.e("AdvSdk", "flags = 0x" + Integer.toHexString(decorView.getSystemUiVisibility()));
         decorView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+*/
+        decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
 /*****************************************************************************************************/
@@ -335,6 +368,7 @@ public class AdvSdklib {
      * Start get battery status.
      */
     public void startGetBatteryStatus() {
+        mBatteryStatus.initBatteryStatus();
         IntentFilter mFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); 
         mContext.registerReceiver(mBatteryReceiver, mFilter);
     }
@@ -343,6 +377,7 @@ public class AdvSdklib {
      * Stop get battery status.
      */
     public void stopGetBatteryStatus() {
+        mBatteryStatus.initBatteryStatus();
         mContext.unregisterReceiver(mBatteryReceiver);
     }
 	

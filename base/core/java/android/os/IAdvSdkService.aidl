@@ -218,7 +218,8 @@ interface IAdvSdkService{
      * Auto start application when Starting up.
      * @param pkgname the application package name.
      */
-    void autoStartApplication(String pkgname);
+    void setAutoStartApplication(String pkgname);
+    String getAutoStartApplication();
 	
 	
     /**

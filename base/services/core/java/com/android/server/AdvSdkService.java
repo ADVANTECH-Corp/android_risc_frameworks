@@ -59,6 +59,10 @@ import android.app.StatusBarManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.IPackageDeleteObserver;
+import android.app.PackageInstallObserver;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiConfiguration.KeyMgmt;
@@ -113,7 +117,11 @@ import android.os.IBinder;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.app.LocalePicker;
 import com.android.internal.statusbar.IStatusBarService;
-
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED_UNTIL_USED;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER;
+import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 public final class AdvSdkService extends IAdvSdkService.Stub {
     private static final String TAG = "AdvSdk";
     private static final boolean LOCAL_DEBUG = true;
@@ -142,6 +150,7 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void showBackButton(boolean show){
         int flags = getButtonAndIconStatus();
+	showButtonAndIcon(flags);
 	SystemProperties.set("persist.navbar.back", show ? "1" : "2");
 	showButtonAndIcon(show ? flags & (~StatusBarManager.DISABLE_BACK) : flags | StatusBarManager.DISABLE_BACK);
     }
@@ -157,6 +166,7 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void showHomeButton(boolean show){
         int flags = getButtonAndIconStatus();
+	showButtonAndIcon(flags);
         SystemProperties.set("persist.navbar.home", show ? "1" : "2");
         showButtonAndIcon(show ? flags & (~StatusBarManager.DISABLE_HOME) : flags | StatusBarManager.DISABLE_HOME);
     }
@@ -172,6 +182,7 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void showRecentButton(boolean show){
         int flags = getButtonAndIconStatus();
+	showButtonAndIcon(flags);
         SystemProperties.set("persist.navbar.recent", show ? "1" : "2");
         showButtonAndIcon(show ? flags & (~StatusBarManager.DISABLE_RECENT) : flags | StatusBarManager.DISABLE_RECENT);
     }
@@ -187,13 +198,14 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void setNavigationBarColor(int color){
         int flags = getButtonAndIconStatus();
+	showButtonAndIcon(flags);
         SystemProperties.set("persist.navbar.color", "" + color);
         flags = (flags & (~StatusBarManager.DISABLE_SEARCH)) | (flags ^ StatusBarManager.DISABLE_SEARCH);
 	showButtonAndIcon(flags); 
         if((flags & StatusBarManager.DISABLE_SEARCH)  != 0)
-            SystemProperties.set("persist.sb.ic.search", "1");
+            SystemProperties.set("persist.sb.search", "1");
         else
-            SystemProperties.set("persist.sb.ic.search", "0");
+            SystemProperties.set("persist.sb.search", "0");
     }
 
     public int getNavigationBarColor(){
@@ -209,12 +221,13 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void showQuickSettingMenu(boolean show) {
         int flags = getButtonAndIconStatus();
-        SystemProperties.set("persist.statusbar.quicksetting", show ? "1" : "2");
+	showButtonAndIcon(flags);
+        SystemProperties.set("persist.sb.quicksetting", show ? "1" : "2");
         showButtonAndIcon(show ? flags & (~StatusBarManager.DISABLE_EXPAND) : flags | StatusBarManager.DISABLE_EXPAND);
     }
 
     public boolean isQuickSettingMenuShow() {
-        return SystemProperties.getInt("persist.statusbar.quicksetting", 0) != 2 ;
+        return SystemProperties.getInt("persist.sb.quicksetting", 0) != 2 ;
     }
 
 
@@ -224,12 +237,13 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void showTimeIcon(boolean show) {
         int flags = getButtonAndIconStatus();
-        SystemProperties.set("persist.sb.ic.clock", show ? "1" : "2");
+	showButtonAndIcon(flags);
+        SystemProperties.set("persist.sb.clock", show ? "1" : "2");
         showButtonAndIcon(show ? flags & (~StatusBarManager.DISABLE_CLOCK) : flags | StatusBarManager.DISABLE_CLOCK);
     }
 
     public boolean isTimeIconShow() {
-        return SystemProperties.getInt("persist.sb.ic.clock", 0) != 2;
+        return SystemProperties.getInt("persist.sb.clock", 0) != 2;
     }
 
 
@@ -239,18 +253,19 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void showBatteryIcon(boolean show) {
         int flags = getButtonAndIconStatus();
-        SystemProperties.set("persist.sb.ic.battery", show ? "1" : "2");
+	showButtonAndIcon(flags);
+        SystemProperties.set("persist.sb.battery", show ? "1" : "2");
 	flags = (flags & (~StatusBarManager.DISABLE_SEARCH)) | (flags ^ StatusBarManager.DISABLE_SEARCH);
         showButtonAndIcon(flags); 
         if((flags & StatusBarManager.DISABLE_SEARCH)  != 0)
-            SystemProperties.set("persist.sb.ic.search", "1");
+            SystemProperties.set("persist.sb.search", "1");
         else
-            SystemProperties.set("persist.sb.ic.search", "0");
+            SystemProperties.set("persist.sb.search", "0");
 
     }
 
     public boolean isBatteryIconShow() {
-        return SystemProperties.getInt("persist.sb.ic.battery", 0) != 2;
+        return SystemProperties.getInt("persist.sb.battery", 0) != 2;
     }
 
 
@@ -260,13 +275,14 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      */
     public void setStatusBarColor(int color) {
         int flags = getButtonAndIconStatus();
+	showButtonAndIcon(flags);
         SystemProperties.set("persist.statusbar.color", "" + color);
         flags = (flags & (~StatusBarManager.DISABLE_SEARCH)) | (flags ^ StatusBarManager.DISABLE_SEARCH);
         showButtonAndIcon(flags); 
         if((flags & StatusBarManager.DISABLE_SEARCH)  != 0)
-            SystemProperties.set("persist.sb.ic.search", "1");
+            SystemProperties.set("persist.sb.search", "1");
         else
-            SystemProperties.set("persist.sb.ic.search", "0");
+            SystemProperties.set("persist.sb.search", "0");
     }
 
     public int getStatusBarColor(){
@@ -300,13 +316,13 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
         if (SystemProperties.getInt("persist.navbar.recent", 0) == 2) {
                 flags |= StatusBarManager.DISABLE_RECENT;
         }
-        if (SystemProperties.getInt("persist.statusbar.quicksetting", 0) == 2) {
+        if (SystemProperties.getInt("persist.sb.quicksetting", 0) == 2) {
                 flags |= StatusBarManager.DISABLE_EXPAND;
         }
-        if (SystemProperties.getInt("persist.sb.ic.clock", 0) == 2) {
+        if (SystemProperties.getInt("persist.sb.clock", 0) == 2) {
                 flags |= StatusBarManager.DISABLE_CLOCK;
         }
-	if (SystemProperties.getInt("persist.sb.ic.search", 0) == 1) {
+	if (SystemProperties.getInt("persist.sb.search", 0) == 1) {
                 flags |= StatusBarManager.DISABLE_SEARCH;
         }
 
@@ -492,6 +508,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param brightness 0-255
      */
     public void setBrightness(int brightness) {
+        if (brightness < 0 || brightness > 255) {
+	    Slog.e(TAG, "Failed to set screen brightness, illegal argument");
+	    return;
+	}
         IPowerManager mPowerManager = IPowerManager.Stub.asInterface(ServiceManager.getService("power"));
 	try {
             mPowerManager.setTemporaryScreenBrightnessSettingOverride(brightness);
@@ -515,7 +535,11 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param timeout screen timeout
      */
     public void setScreenTimeout(int timeout) {
-	 Settings.System.putInt(mContext.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, timeout);
+	if (timeout < 15000 || timeout > 1800000) {
+            Slog.e(TAG, "Failed to set screen timeout, illegal argument");
+            return;
+        }
+        Settings.System.putInt(mContext.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, timeout);
     }
 
     public int getScreenTimeout() {
@@ -528,6 +552,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param fontsize 4 level totally(0.85, 1.0, 1.15 and 1.30) 
      */
     public void setFontSize(float fontsize) {
+	if (fontsize < 0.85 || fontsize > 1.30) {
+            Slog.e(TAG, "Failed to set font size, illegal argument");
+            return;
+        }
 	Configuration mCurConfig = new Configuration();
 	try {
 	    mCurConfig.updateFrom(ActivityManagerNative.getDefault().getConfiguration());
@@ -559,6 +587,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param volume 0-15
      */
     public void setMediaVolume(int volume) {
+        if (volume < 0 || volume > 15) {
+            Slog.e(TAG, "Failed to set media volume, illegal argument");
+            return;
+        }
         AudioManager mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_PLAY_SOUND);
 }
@@ -574,6 +606,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param volume 0-7
      */
     public void setAlarmVolume(int volume) {
+        if (volume < 0 || volume > 7) {
+            Slog.e(TAG, "Failed to set alarm volume, illegal argument");
+            return;
+        }
         AudioManager mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.setStreamVolume(AudioManager.STREAM_ALARM, volume, AudioManager.FLAG_PLAY_SOUND);
 }
@@ -589,6 +625,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param volume 0-7
      */
     public void setNotificationVolume(int volume) {
+        if (volume < 0 || volume > 7) {
+            Slog.e(TAG, "Failed to set notification volume, illegal argument");
+            return;
+        }
         AudioManager mAudioManager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, volume, AudioManager.FLAG_PLAY_SOUND);
 }
@@ -664,8 +704,27 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param pkgname the application package name.
      */
     public void disableApplication(String pkgname) {
-        PackageManager mPackageManager = this.mContext.getPackageManager();
-        mPackageManager.setApplicationEnabledSetting(pkgname, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+	if((pkgname == null)||(pkgname.equals(""))){
+		Slog.e(TAG, "Failed to disable application, empty argument");
+		return ;
+	}
+	try{
+                PackageManager mPackageManager = this.mContext.getPackageManager();
+                PackageInfo mPackageInfo = mPackageManager.getPackageInfo( pkgname,
+				PackageManager.GET_UNINSTALLED_PACKAGES );
+		if (mPackageInfo != null ){
+			if (mPackageManager.getApplicationEnabledSetting(pkgname) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED){
+				Slog.e(TAG, "application is disable");
+				return ;
+			}
+			mPackageManager.setApplicationEnabledSetting(pkgname, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+		}
+	}
+	catch (NameNotFoundException e)	{
+		Slog.e(TAG, "Failed to disable application, illegal argument");
+		e.printStackTrace();
+	}
+
     }
 
     /**
@@ -673,8 +732,26 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param pkgname the application package name.
      */
     public void enableApplication(String pkgname) {
-        PackageManager mPackageManager = this.mContext.getPackageManager();   
-        mPackageManager.setApplicationEnabledSetting(pkgname, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+	if((pkgname == null)||(pkgname.equals(""))){
+		Slog.e(TAG, "Failed to enable application, empty argument");
+		return ;
+	}
+	try{
+                PackageManager mPackageManager = this.mContext.getPackageManager();
+                PackageInfo mPackageInfo = mPackageManager.getPackageInfo( pkgname,
+				PackageManager.GET_UNINSTALLED_PACKAGES );
+		if (mPackageInfo != null ){
+			if (mPackageManager.getApplicationEnabledSetting(pkgname) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED){
+				Slog.e(TAG, "application is enable");
+				return ;
+			}
+			mPackageManager.setApplicationEnabledSetting(pkgname, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+		}
+	}
+	catch (NameNotFoundException e)	{
+		Slog.e(TAG, "Failed to enable application, illegal argument");
+		e.printStackTrace();
+	}
     }
 
 
@@ -683,10 +760,21 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param path the updated file full path.
      */
     public void updateApplication(String path) {
+/*
         Intent intent = new Intent();
         intent.setAction("android.intent.action.VIEW"); 
         intent.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
         mContext.startActivity(intent);
+*/
+	if((path == null)||(path.equals(""))){
+		Slog.e(TAG, "Failed to update/install application, empty argument");
+		return ;
+	}
+
+	int installFlags = 0;
+	PackageManager mPackageManager = this.mContext.getPackageManager();
+	PackageInstallObserver observer = new PackageInstallObserver();
+	mPackageManager.installPackage(Uri.fromFile(new File(path)), observer, installFlags, null);
     }
 
     /**
@@ -694,9 +782,18 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param pkgname the application package name.
      */
     public void removeApplication(String pkgname) {
+/*
         Uri uri = Uri.parse("package:" + pkgname);
         Intent intent = new Intent(Intent.ACTION_DELETE, uri);
         mContext.startActivity(intent);
+*/
+	if((pkgname == null)||(pkgname.equals(""))){
+		Slog.e(TAG, "Failed to remove application, empty argument");
+		return ;
+	}
+	int unstallFlags = 0;
+	PackageManager mPackageManager = this.mContext.getPackageManager();
+	mPackageManager.deletePackage(pkgname, null, unstallFlags);
     }
 
     /**
@@ -704,19 +801,41 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param pkgname the application package name.
      */
     public void startApplication(String pkgname) {
-	Intent intent = new Intent();
-	PackageManager mPackageManager = this.mContext.getPackageManager();
-	intent = mPackageManager.getLaunchIntentForPackage(pkgname);
-	intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        mContext.startActivity(intent);
+	if((pkgname == null)||(pkgname.equals(""))){
+		Slog.e(TAG, "Failed to start application, empty argument");
+		return ;
+	}
+	try{
+		PackageManager mPackageManager = this.mContext.getPackageManager();
+		PackageInfo mPackageInfo = mPackageManager.getPackageInfo( pkgname,
+				PackageManager.GET_UNINSTALLED_PACKAGES );
+		if (mPackageInfo != null ){
+			if (mPackageManager.getApplicationEnabledSetting(pkgname) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED){
+				Slog.e(TAG, "Failed to start application, application is disabled");
+				return ;
+			}
+
+			Intent intent = new Intent();
+			intent = mPackageManager.getLaunchIntentForPackage(pkgname);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+					mContext.startActivity(intent);
+		}
+	}
+	catch (NameNotFoundException e)	{
+		Slog.e(TAG, "Failed to start application, illegal argument");
+		e.printStackTrace();
+	}
 
     }
 
+
     /**
-     * Auto start application when Starting up.
+     * set auto start application when Starting up.
      * @param pkgname the application package name.
      */
-    public void autoStartApplication(String pkgname) {
+    public void setAutoStartApplication(String pkgname) {
+	SystemProperties.set("persist.app.autostartapp", pkgname);
+/*
     	if( pkgname != null)
         {
             Intent newintent = new Intent();
@@ -727,6 +846,11 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
                 mContext.startActivity(newintent);
 	    }
         }
+*/
+    }
+
+    public String getAutoStartApplication() {
+        return SystemProperties.get("persist.app.autostartapp", "");
     }
 
 /*****************************************************************************************************/
@@ -871,6 +995,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param mode set location mode.
      */
     public void setLocationMode(int mode) {
+        if (mode < 1 || mode > 3) {
+            Slog.e(TAG, "Failed to set location mode, illegal argument");
+            return;
+        }
         Settings.Secure.putInt(mContext.getContentResolver(), Settings.Secure.LOCATION_MODE, mode);
     }
 
@@ -944,7 +1072,11 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param timeout set screen lock info timeout.
      */
     public void setScreenLockTimeout(int timeout) {
-            Settings.Secure.putInt(mContext.getContentResolver(),
+        if (timeout < 0 || timeout > 1800000) {
+            Slog.e(TAG, "Failed to set screen lock timeout, illegal argument");
+            return;
+        }
+        Settings.Secure.putInt(mContext.getContentResolver(),
                 Settings.Secure.LOCK_SCREEN_LOCK_AFTER_TIMEOUT, timeout);
 
 
@@ -1061,6 +1193,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param speed set pointer speed.
      */
     public void setPointerSpeed(int speed) {
+        if (speed < -7 || speed > 7) {
+            Slog.e(TAG, "Failed to set pointer speed, illegal argument");
+            return;
+        }
 	InputManager mIm = (InputManager) mContext.getSystemService(Context.INPUT_SERVICE);
 	mIm.tryPointerSpeed(speed);
 	mIm.setPointerSpeed(mContext,speed);
@@ -1246,12 +1382,16 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param enabling enable or disable auto screen rotation
      */
     public void enableAutoScreenRotation(boolean enabling) {
-        RotationPolicy.setRotationLockForAccessibility(mContext,
-                !enabling);
+        //RotationPolicy.setRotationLockForAccessibility(mContext,
+        //        !enabling);
+	Settings.System.putInt(mContext.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,enabling ? 1 : 0);
+	//RotationPolicy.setRotationLock(false, 0);
     }
 
     public boolean isAutoScreenRotationEnabled() {
         return !RotationPolicy.isRotationLocked(mContext);
+	//return !Settings.System.getIntForUser(mContext.getContentResolver(),
+        //        Settings.System.ACCELEROMETER_ROTATION, 0, UserHandle.USER_CURRENT) == 0;
     }
 
 
@@ -1260,8 +1400,15 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param rotation set screen rotation
      */
     public void setScreenRotation(int rotation){
-        Settings.System.putInt(mContext.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,0);
-        Settings.System.putInt(mContext.getContentResolver(),Settings.System.USER_ROTATION,rotation);
+        if (rotation < 0 || rotation > 3) {
+            Slog.e(TAG, "Failed to set screen rotation, illegal argument");
+            return;
+        }
+	//Settings.System.putInt(mContext.getContentResolver(),Settings.System.ACCELEROMETER_ROTATION,0);
+        //Settings.System.putInt(mContext.getContentResolver(),Settings.System.USER_ROTATION,rotation);
+	//RotationPolicy.setRotationLock(true, rotation);
+	Settings.System.putInt(mContext.getContentResolver(),Settings.System.USER_ROTATION,rotation);
+
     }
     
     public int getScreenRotation() {
@@ -1367,6 +1514,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param scale there are 6 levels (0, 0.5, 1, 1.5, 2, 5, 10)
      */    
     public void setWindowAnimationScale(float scale) {
+        if (scale < 0 || scale > 10) {
+            Slog.e(TAG, "Failed to set window animation scale, illegal argument");
+            return;
+        }
         IWindowManager mWindowManager = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
         try {
             mWindowManager.setAnimationScale(0, scale);
@@ -1391,6 +1542,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param scale there are 6 levels (0, 0.5, 1, 1.5, 2, 5, 10)
      */    
     public void setTransitionAnimationScale(float scale) {
+        if (scale < 0 || scale > 10) {
+            Slog.e(TAG, "Failed to set transition animation scale, illegal argument");
+            return;
+        }
         IWindowManager mWindowManager = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
         try {
             mWindowManager.setAnimationScale(1, scale);
@@ -1415,6 +1570,10 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
      * @param scale there are 6 levels (0, 0.5, 1, 1.5, 2, 5, 10)
      */    
     public void setAnimatorDurationScale(float scale) {
+        if (scale < 0 || scale > 10) {
+            Slog.e(TAG, "Failed to set animation duration scale, illegal argument");
+            return;
+        }
         IWindowManager mWindowManager = IWindowManager.Stub.asInterface(ServiceManager.getService("window"));
         try {
             mWindowManager.setAnimationScale(2, scale);

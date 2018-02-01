@@ -2831,8 +2831,8 @@ package android.advsdklib {
 
   public class AdvSdklib {
     ctor public AdvSdklib(android.content.Context);
-    method public android.advsdklib.AdvSdklib.BatteryStatus GetBatteryStatus();
     method public android.text.format.Time formatDateTime(java.lang.String);
+    method public android.advsdklib.AdvSdklib.BatteryStatus getBatteryStatus();
     method public java.util.Set<android.bluetooth.BluetoothDevice> getBluetoothBondedDevices();
     method public android.advsdklib.AdvSdklib.MemoryStatus getMemoryStatus();
     method public java.util.List<android.net.wifi.ScanResult> getWifiScanResults();
@@ -2848,17 +2848,21 @@ package android.advsdklib {
   }
 
   public class AdvSdklib.BatteryStatus {
+    ctor public AdvSdklib.BatteryStatus();
     method public java.lang.String getHealth();
     method public int getLevelPercent();
     method public java.lang.String getPlugged();
     method public java.lang.String getStatus();
     method public float getTemperature();
     method public float getVoltage();
+    method public void initBatteryStatus();
   }
 
   public class AdvSdklib.MemoryStatus {
+    ctor public AdvSdklib.MemoryStatus();
     method public long getAvailMemory();
     method public long getTotalMemory();
+    method public void initMemoryStatus();
   }
 
 }
@@ -23108,7 +23112,6 @@ package android.os {
 
   public abstract interface IAdvSdkService implements android.os.IInterface {
     method public abstract void allowNonMarketAppsInstall(boolean) throws android.os.RemoteException;
-    method public abstract void autoStartApplication(java.lang.String) throws android.os.RemoteException;
     method public abstract void disableApplication(java.lang.String) throws android.os.RemoteException;
     method public abstract void enableAdb(boolean) throws android.os.RemoteException;
     method public abstract void enableAirplaneMode(boolean) throws android.os.RemoteException;
@@ -23141,6 +23144,7 @@ package android.os {
     method public abstract java.lang.String[] getAllTimeZoneIDs() throws android.os.RemoteException;
     method public abstract java.lang.String[] getAllTimeZoneNames() throws android.os.RemoteException;
     method public abstract float getAnimatorDurationScale() throws android.os.RemoteException;
+    method public abstract java.lang.String getAutoStartApplication() throws android.os.RemoteException;
     method public abstract int getBrightness() throws android.os.RemoteException;
     method public abstract java.lang.String getDateTime() throws android.os.RemoteException;
     method public abstract float getFontSize() throws android.os.RemoteException;
@@ -23203,6 +23207,7 @@ package android.os {
     method public abstract void set24HourFormat(boolean) throws android.os.RemoteException;
     method public abstract void setAlarmVolume(int) throws android.os.RemoteException;
     method public abstract void setAnimatorDurationScale(float) throws android.os.RemoteException;
+    method public abstract void setAutoStartApplication(java.lang.String) throws android.os.RemoteException;
     method public abstract void setBrightness(int) throws android.os.RemoteException;
     method public abstract void setDateTime(int, int, int, int, int, int) throws android.os.RemoteException;
     method public abstract void setFontSize(float) throws android.os.RemoteException;

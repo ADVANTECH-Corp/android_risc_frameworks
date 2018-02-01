@@ -683,11 +683,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
-        int prop = SystemProperties.getInt("persist.statusbar", 0);
-        if(prop == 2){
-            FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
-            mStatusBarView.setLayoutParams(lytp);
-        }
+//nanjie.huang modify start
+        //int prop = SystemProperties.getInt("persist.statusbar", 0);
+        //if(prop == 2){
+        //    FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+        //    mStatusBarView.setLayoutParams(lytp);
+        //}
+//nanjie.huang modify end
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
 
@@ -954,7 +956,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
 
 // nanjie.huang modify start
-        int batteryprop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+        int batteryprop = SystemProperties.getInt("persist.sb.battery", 0);
         if(batteryprop != 0) {
             mIconController.setBatteryVisibility( batteryprop != 2 ? true : false);
         }
@@ -1921,17 +1923,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         }
 */
-	int quicksettingprop = SystemProperties.getInt("persist.statusbar.quicksetting", 0);
+	int quicksettingprop = SystemProperties.getInt("persist.sb.quicksetting", 0);
         if(quicksettingprop == 2) {
             animateCollapsePanels();
         }
 
-        int clockprop = SystemProperties.getInt("persist.sb.ic.clock", 0);
+        int clockprop = SystemProperties.getInt("persist.sb.clock", 0);
         if(clockprop != 0) {
             mIconController.setClockVisibility(clockprop != 2 ? true : false);
         }
 
-	int batteryprop = SystemProperties.getInt("persist.sb.ic.battery", 0);
+	int batteryprop = SystemProperties.getInt("persist.sb.battery", 0);
         if(batteryprop != 0) {
             mIconController.setBatteryVisibility( batteryprop != 2 ? true : false);
         }
@@ -2465,7 +2467,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         int prop = SystemProperties.getInt("persist.statusbar", 0);
         mStatusBarView.setVisibility(prop == 2 ? View.INVISIBLE : View.VISIBLE);
-
         if (diff != 0) {
             // we never set the recents bit via this method, so save the prior state to prevent
             // clobbering the bit below
