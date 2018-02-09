@@ -23,7 +23,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
@@ -72,6 +74,22 @@ public class Clock extends TextView implements DemoMode {
                 attrs,
                 R.styleable.Clock,
                 0, 0);
+        if (!SystemProperties.get("persist.setting.auto.dt.val").equals("")) {
+            Settings.Global.putInt(context.getContentResolver(), Settings.Global.AUTO_TIME,
+            SystemProperties.getBoolean("persist.setting.auto.dt.val",true) ? 1 : 0);
+        }
+        if (!SystemProperties.get("persist.setting.auto.tz.val").equals("")) {
+            Settings.Global.putInt(context.getContentResolver(), Settings.Global.AUTO_TIME_ZONE,
+            SystemProperties.getBoolean("persist.setting.auto.tz.val",true) ? 1 : 0);
+        }
+        if (!SystemProperties.get("persist.setting.twentyfour.val").equals("")) {
+            Boolean is24Hour = SystemProperties.getBoolean("persist.setting.twentyfour.val",true);
+            Settings.System.putString(context.getContentResolver(),
+                Settings.System.TIME_12_24, is24Hour ? "24" : "12");
+            Intent timeChanged = new Intent(Intent.ACTION_TIME_CHANGED);
+            timeChanged.putExtra(Intent.EXTRA_TIME_PREF_24_HOUR_FORMAT, is24Hour);
+            mContext.sendBroadcast(timeChanged);
+        }
         try {
             mAmPmStyle = a.getInt(R.styleable.Clock_amPmStyle, AM_PM_STYLE_GONE);
         } finally {
