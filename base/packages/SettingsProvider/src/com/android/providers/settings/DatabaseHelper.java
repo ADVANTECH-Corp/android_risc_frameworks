@@ -2419,8 +2419,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
                 R.bool.def_dtmf_tones_enabled);
         loadBooleanSetting(stmt, Settings.System.SOUND_EFFECTS_ENABLED,
                 R.bool.def_sound_effects_enabled);
-        loadBooleanSetting(stmt, Settings.System.HAPTIC_FEEDBACK_ENABLED,
-                R.bool.def_haptic_feedback);
+        //loadBooleanSetting(stmt, Settings.System.HAPTIC_FEEDBACK_ENABLED,
+        //        R.bool.def_haptic_feedback);
+        loadBooleanSettingFromCust(stmt, Settings.System.HAPTIC_FEEDBACK_ENABLED,
+                R.bool.def_haptic_feedback, "persist.def.haptic.feedback");
 
         loadIntegerSetting(stmt, Settings.System.LOCKSCREEN_SOUNDS_ENABLED,
             R.integer.def_lockscreen_sounds_enabled);
@@ -2434,8 +2436,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void loadDefaultHapticSettings(SQLiteStatement stmt) {
-        loadBooleanSetting(stmt, Settings.System.HAPTIC_FEEDBACK_ENABLED,
-                R.bool.def_haptic_feedback);
+        //loadBooleanSetting(stmt, Settings.System.HAPTIC_FEEDBACK_ENABLED,
+        //        R.bool.def_haptic_feedback);
+        loadBooleanSettingFromCust(stmt, Settings.System.HAPTIC_FEEDBACK_ENABLED,
+                R.bool.def_haptic_feedback, "persist.def.haptic.feedback");
     }
 
     private void loadSecureSettings(SQLiteDatabase db) {
