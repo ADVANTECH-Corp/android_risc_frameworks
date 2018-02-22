@@ -713,7 +713,7 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
                 PackageInfo mPackageInfo = mPackageManager.getPackageInfo( pkgname,
 				PackageManager.GET_UNINSTALLED_PACKAGES );
 		if (mPackageInfo != null ){
-			if (mPackageManager.getApplicationEnabledSetting(pkgname) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED){
+			if (mPackageManager.getApplicationEnabledSetting(pkgname) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED){
 				Slog.e(TAG, "application is disable");
 				return ;
 			}
@@ -791,9 +791,19 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
 		Slog.e(TAG, "Failed to remove application, empty argument");
 		return ;
 	}
-	int unstallFlags = 0;
-	PackageManager mPackageManager = this.mContext.getPackageManager();
-	mPackageManager.deletePackage(pkgname, null, unstallFlags);
+	try{
+                PackageManager mPackageManager = this.mContext.getPackageManager();
+                PackageInfo mPackageInfo = mPackageManager.getPackageInfo( pkgname,
+                                PackageManager.GET_UNINSTALLED_PACKAGES );
+                if (mPackageInfo != null ){
+			mPackageManager.deletePackage(pkgname, null, 0);
+		}
+	}
+        catch (NameNotFoundException e) {
+                Slog.e(TAG, "Failed to remove application, illegal argument");
+                e.printStackTrace();
+        }
+
     }
 
     /**
@@ -810,15 +820,20 @@ public final class AdvSdkService extends IAdvSdkService.Stub {
 		PackageInfo mPackageInfo = mPackageManager.getPackageInfo( pkgname,
 				PackageManager.GET_UNINSTALLED_PACKAGES );
 		if (mPackageInfo != null ){
-			if (mPackageManager.getApplicationEnabledSetting(pkgname) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED){
+			Slog.i(TAG, "Application = " + pkgname + "    ApplicationEnabledSetting = " + mPackageManager.getApplicationEnabledSetting(pkgname));
+			if (mPackageManager.getApplicationEnabledSetting(pkgname) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED || mPackageManager.getApplicationEnabledSetting(pkgname) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER){
 				Slog.e(TAG, "Failed to start application, application is disabled");
 				return ;
 			}
-
+		
 			Intent intent = new Intent();
 			intent = mPackageManager.getLaunchIntentForPackage(pkgname);
+			if(intent == null) { 
+				Slog.e(TAG, "Failed to start application, application does not contain the main activity");
+				return ;
+			}
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-					mContext.startActivity(intent);
+			mContext.startActivity(intent);
 		}
 	}
 	catch (NameNotFoundException e)	{
