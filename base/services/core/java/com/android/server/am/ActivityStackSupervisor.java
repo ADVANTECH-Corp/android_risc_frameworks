@@ -127,6 +127,28 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+//Ryan 20170410
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.StringReader;
+//
+import android.util.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+//
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.io.InputStreamReader;
+
 public final class ActivityStackSupervisor implements DisplayListener {
     private static final String TAG = TAG_WITH_CLASS_NAME ? "ActivityStackSupervisor" : TAG_AM;
     private static final String TAG_CONFIGURATION = TAG + POSTFIX_CONFIGURATION;
@@ -1396,6 +1418,157 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 "activity", r.intent.getComponent(), false, false, true);
     }
 
+    public static String DecryptDoNet(String message, String key)throws Exception {
+
+        byte[] bytesrc = Base64.decode(message.getBytes(), Base64.DEFAULT);
+        Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+        DESKeySpec desKeySpec = new DESKeySpec(key.getBytes("UTF-8"));
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+        SecretKey secretKey = keyFactory.generateSecret(desKeySpec);
+        IvParameterSpec iv = new IvParameterSpec(key.getBytes("UTF-8"));
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+        byte[] retByte = cipher.doFinal(bytesrc);
+        return new String(retByte);
+    }
+
+    private boolean inAbsolutePassPackagesList(String path, String filename,String packageName) {
+        BufferedReader fileReader = null;
+
+        StringBuilder textAllBeforeDecrypt_StringBuilder= new StringBuilder();
+        BufferedReader fileReaderBeforeDecrypt= null;
+        try{
+            fileReaderBeforeDecrypt = new BufferedReader(new FileReader(path+filename));
+            String test = null;
+            while ((test = fileReaderBeforeDecrypt.readLine()) != null) {
+                // Log.i(TAG,"test:"+test);
+                textAllBeforeDecrypt_StringBuilder.append(test);
+            }
+        }catch (IOException e) {
+
+        }
+       Slog.i(TAG, "Ryan20170411inActivityStackSupervisor.java///readAbsolutePassPackagesList before:  "+ textAllBeforeDecrypt_StringBuilder.toString());
+
+        //
+        String textAllAfterDecrypt="";
+        try {
+            textAllAfterDecrypt = DecryptDoNet(textAllBeforeDecrypt_StringBuilder.toString(),"The_key!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Slog.i(TAG, "Ryan20170411inActivityStackSupervisor.java//readAbsolutePassPackagesList after.  "+textAllAfterDecrypt);
+
+        InputStream stream = new ByteArrayInputStream(textAllAfterDecrypt.getBytes(StandardCharsets.UTF_8));
+
+        ///
+
+         try {
+
+            fileReader = new BufferedReader(new InputStreamReader(stream));//fileReader = new BufferedReader(new FileReader(path+filename));
+            String actual = null;
+
+            while ((actual = fileReader.readLine()) != null) {
+                if(actual.indexOf("#")==0 ){
+                    continue;
+                }
+                if(packageName.equals(actual)){
+                    Slog.i("TAG","Ryan20170411inActivityStackSupervisor.java // readAbsolutePassPackagesList // actual: "+actual);
+                    return true;
+                }
+               
+            }
+            fileReader.close();
+
+        } catch (IOException e) {
+
+        }
+        return false;
+    }
+//
+    private String[] readPackagesSettingList(String path, String filename) {
+        //File inFile = new File(path, filename);
+        BufferedReader fileReader = null;
+
+        Slog.i(TAG, "RyanTest:Validating file " + filename + " at " + path.toString());
+
+        //Read text from file
+        String[] result=new String[2];
+        StringBuilder textReject = new StringBuilder();
+        StringBuilder textAllow = new StringBuilder();
+        
+
+
+////////////////////////
+
+        StringBuilder textAllBeforeDecrypt_StringBuilder= new StringBuilder();
+        BufferedReader fileReaderBeforeDecrypt= null;
+        try{
+            fileReaderBeforeDecrypt = new BufferedReader(new FileReader(path+filename));
+            String test = null;
+            while ((test = fileReaderBeforeDecrypt.readLine()) != null) {
+                // Log.i(TAG,"test:"+test);
+                textAllBeforeDecrypt_StringBuilder.append(test);
+            }
+        }catch (IOException e) {
+
+        }
+       Slog.i(TAG, "Ryan20170411inActivityStackSupervisor.java///textAllBeforeDecrypt_StringBuilder:   " + textAllBeforeDecrypt_StringBuilder.toString());
+
+        //
+        String textAllAfterDecrypt="";
+        try {
+            textAllAfterDecrypt = DecryptDoNet(textAllBeforeDecrypt_StringBuilder.toString(),"The_key!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Slog.i(TAG, "Ryan20170411inActivityStackSupervisor.java///textAllAfterDecrypt"+"textAllAfterDecrypt: "+textAllAfterDecrypt);
+
+        InputStream stream = new ByteArrayInputStream(textAllAfterDecrypt.getBytes(StandardCharsets.UTF_8));
+
+////////////////////////
+
+        try {
+
+            fileReader = new BufferedReader(new InputStreamReader(stream));//fileReader = new BufferedReader(new FileReader(path+filename));
+            String actual = null;
+
+            while ((actual = fileReader.readLine()) != null) {
+
+                String[] tokens=actual.split(":");
+                if(actual.indexOf("#")==0 ){
+                    continue;
+                }
+                else if(tokens.length<2){
+                    continue;
+                }
+                else{
+                    //install or launch // 1install 2launch 3? 4? 5?
+                    if( tokens[0].equals("2")){  //equals("1or2") €À§O¬°install ©Î launch
+
+                        // 0=reject 1=allow
+                        if( tokens[2].equals("1")){
+                            textAllow.append(tokens[1]).append('\n');
+                        }
+                        else if( tokens[2].equals("0")){
+                            textReject.append(tokens[1]).append('\n');
+                        }
+                    }
+
+                }
+            }
+            fileReader.close();
+
+        } catch (IOException e) {
+
+        }
+        result[0]=textReject.toString();
+        result[1]=textAllow.toString();
+        
+        Slog.i(TAG, "RyanTest: readPackagesSettingList : result[0]: " + result[0].toString());
+        Slog.i(TAG, "RyanTest: readPackagesSettingList : result[1]: " + result[1].toString());
+
+        return result;
+    }
+
     final int startActivityLocked(IApplicationThread caller,
             Intent intent, String resolvedType, ActivityInfo aInfo,
             IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
@@ -1405,6 +1578,46 @@ public final class ActivityStackSupervisor implements DisplayListener {
             boolean ignoreTargetSecurity, boolean componentSpecified, ActivityRecord[] outActivity,
             ActivityContainer container, TaskRecord inTask) {
         int err = ActivityManager.START_SUCCESS;
+
+//////////////////////
+        //Ryan
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  resolvedType:"+resolvedType);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  resultWho:"+resultWho);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  requestCode:"+requestCode);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  callingPid:"+callingPid);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  callingUid:"+callingUid);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  callingPackage:"+callingPackage);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  realCallingPid:"+realCallingPid);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  realCallingUid:"+realCallingUid);
+        Slog.i("RyanLaunch20170410", "in startActivityLocked  startFlags:"+startFlags);
+
+
+        Boolean absolutePass=false;
+
+
+        String[] backResult=readPackagesSettingList("/system/etc/","PSLAIM");
+        if( aInfo!=null  && !inAbsolutePassPackagesList("/system/etc/","absolutePackageName"   ,aInfo.applicationInfo.packageName)      ){ //add distinguish
+            Slog.i("RyanLaunch20170410", "if( aInfo!=null)");
+            Slog.i("RyanLaunch20170410", "aInfo.applicationInfo.packageName): "+aInfo.applicationInfo.packageName);
+            
+            if(backResult[0].indexOf(aInfo.applicationInfo.packageName)>=0){
+                Slog.i("RyanLaunch20170410","reject to start app because of  packagename");
+                err = ActivityManager.START_PERMISSION_DENIED;//throw new NullPointerException("reject to start app");
+            }
+            else if(backResult[1].indexOf(aInfo.applicationInfo.packageName)>=0){
+                //can launch
+            }
+            else {
+                // the packagename not in list , please to check "other" tag
+                if(backResult[0].indexOf("other")>=0 ){
+                    Slog.i("RyanLaunch20170410","reject to start app because of other");
+                    err = ActivityManager.START_PERMISSION_DENIED;//throw new NullPointerException("reject to start app");
+                }
+        
+            }
+        }
+
+//////////////////////
 
         ProcessRecord callerApp = null;
         if (caller != null) {
