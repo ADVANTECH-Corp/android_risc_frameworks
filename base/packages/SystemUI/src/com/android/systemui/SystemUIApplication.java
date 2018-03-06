@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.SystemProperties;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -85,6 +86,7 @@ public class SystemUIApplication extends Application {
                 }
             }
         }, filter);
+        updateProperties();
     }
 
     /**
@@ -149,5 +151,32 @@ public class SystemUIApplication extends Application {
 
     public SystemUI[] getServices() {
         return mServices;
+    }
+    
+    public void updateProperties(){
+        Context context = getApplicationContext();
+        //AIM
+        //HIGH_TEXT_CONTRAST
+        boolean hctextui_val_prop=SystemProperties.getBoolean("persist.setting.hc.text.val",false);
+        if(hctextui_val_prop){
+                       Settings.Secure.putInt(context.getContentResolver(),
+                        Settings.Secure.ACCESSIBILITY_HIGH_TEXT_CONTRAST_ENABLED, 1) ;
+              //  Log.i("=AIM=Clock","Settings.Secure.ACCESSIBILITY_HIGH_TEXT_CONTRAST_ENABLED=1");
+        }else{
+                Settings.Secure.putInt(context.getContentResolver(),
+                        Settings.Secure.ACCESSIBILITY_HIGH_TEXT_CONTRAST_ENABLED, 0) ;
+               // Log.i("=AIM=Clock","Settings.Secure.ACCESSIBILITY_HIGH_TEXT_CONTRAST_ENABLED=0");
+                                }
+        //DISPLAY_INVERSION
+	    boolean clrinvert_val_prop=SystemProperties.getBoolean("persist.setting.clr.invert.val",false);
+         if(clrinvert_val_prop){
+                        Settings.Secure.putInt(context.getContentResolver(),
+                        Settings.Secure.ACCESSIBILITY_DISPLAY_INVERSION_ENABLED, 1) ;
+              //  Log.i("=AIM=Clock","Settings.Secure.ACCESSIBILITY_DISPLAY_INVERSION_ENABLED=1");
+        }else{
+                Settings.Secure.putInt(context.getContentResolver(),
+                        Settings.Secure.ACCESSIBILITY_DISPLAY_INVERSION_ENABLED, 0) ;
+              //  Log.i("=AIM=Clock","Settings.Secure.ACCESSIBILITY_DISPLAY_INVERSION_ENABLED=0");
+                                }
     }
 }
