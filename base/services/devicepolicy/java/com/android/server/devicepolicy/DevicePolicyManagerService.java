@@ -1798,6 +1798,11 @@ public class DevicePolicyManagerService extends IDevicePolicyManager.Stub {
             updateScreenCaptureDisabledInWindowManager(userHandle,
                     getScreenCaptureDisabled(null, userHandle));
         }
+        try{
+            Runtime.getRuntime().exec("/system/bin/sh /system/bin/init.setadmin.sh");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void cleanUpOldUsers() {

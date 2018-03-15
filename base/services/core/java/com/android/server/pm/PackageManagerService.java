@@ -8446,7 +8446,8 @@ public class PackageManagerService extends IPackageManager.Stub {
                 } break;
 
                 case PermissionInfo.PROTECTION_DANGEROUS: {
-                    if (pkg.applicationInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    if (pkg.applicationInfo.targetSdkVersion <= Build.VERSION_CODES.LOLLIPOP_MR1
+                        || pkg.packageName.equals("com.aimobile.android.Argus")) {
                         // For legacy apps dangerous permissions are install time ones.
                         grant = GRANT_INSTALL_LEGACY;
                     } else if (origPermissions.hasInstallPermission(bp.name)) {
