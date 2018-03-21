@@ -265,6 +265,11 @@ public class StatusBarIconController implements Tunable {
         mClock.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
+// nanjie.huang modify start
+    public void setBatteryVisibility(boolean visible) {
+        mBatteryMeterView.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+// nanjie.huang modify end
     public void dump(PrintWriter pw) {
         int N = mStatusIcons.getChildCount();
         pw.println("  system icons: " + N);

@@ -1630,7 +1630,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mStatusBarHeight =
                 res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-        int sbHeight = SystemProperties.getInt("persist.statusbar.height", 0);
+        //int sbHeight = SystemProperties.getInt("persist.statusbar.height", 0);
+        int sbHeight = SystemProperties.getInt("persist.statusbar.height", mStatusBarHeight);
         if(!SystemProperties.getBoolean("persist.statusbar", true)){
             mStatusBarHeight = 0;
         } else {
@@ -3618,7 +3619,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 if (!SystemProperties.getBoolean("persist.navbar", true)){
                     hideNavBar = true;
                 }
-                int navbarH = SystemProperties.getInt("persist.navbar.height", 0);
+		//int navbarH = SystemProperties.getInt("persist.navbar.height", 0);
+                int mNavigationBarWidth =
+                	mContext.getResources().getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_width);
+		int navbarH = SystemProperties.getInt("persist.navbar.height", mNavigationBarWidth);
                 mNavigationBarOnBottom = (!mNavigationBarCanMove || displayWidth < displayHeight);
                 if (mNavigationBarOnBottom) {
                     // It's a system nav bar or a portrait screen; nav bar goes on bottom.
@@ -3699,7 +3703,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             if (DEBUG_LAYOUT) Slog.i(TAG, String.format("mDock rect: (%d,%d - %d,%d)",
                     mDockLeft, mDockTop, mDockRight, mDockBottom));
-
+            final Resources res = mContext.getResources();
+	    mStatusBarHeight =
+                res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+            //int sbHeight = SystemProperties.getInt("persist.statusbar.height", 0);
+            int sbHeight = SystemProperties.getInt("persist.statusbar.height", mStatusBarHeight);
+            if(!SystemProperties.getBoolean("persist.statusbar", true)){
+                mStatusBarHeight = 0;
+            } else {
+                mStatusBarHeight = sbHeight;
+            }
             // decide where the status bar goes ahead of time
             if (mStatusBar != null) {
                 // apply any navigation bar insets

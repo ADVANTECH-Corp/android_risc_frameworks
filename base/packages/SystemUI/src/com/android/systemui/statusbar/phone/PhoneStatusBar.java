@@ -687,8 +687,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
 
-        FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, getStatusBarHeightFromProperty());
-        mStatusBarView.setLayoutParams(lytp);
+        //FrameLayout.LayoutParams lytp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, getStatusBarHeightFromProperty());
+        //mStatusBarView.setLayoutParams(lytp);
 
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -1000,15 +1000,25 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
     
+    private void showStatusBarIconBattery(){
+        boolean BatteryVisible = SystemProperties.getBoolean("persist.sb.ic.battery", true);
+        mIconController.setBatteryVisibility(BatteryVisible);
+    }
+
+    private void showStatusBarIconTime(){
+        boolean TimeVisible = SystemProperties.getBoolean("persist.sb.ic.time", true);
+        mIconController.setClockVisibility(TimeVisible);
+    }
+
     private int getStatusBarHeightFromProperty()
     {
         final Resources res = mContext.getResources();
         int defaultHeight = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-        boolean sbVisible = SystemProperties.getBoolean("persist.statusbar", true);
+        //boolean sbVisible = SystemProperties.getBoolean("persist.statusbar", true);
         int sbHeight = SystemProperties.getInt("persist.statusbar.height", defaultHeight);
-        if(sbVisible == false || sbHeight == 0){
-            sbHeight = 0;
-        }
+        //if(sbVisible == false || sbHeight == 0){
+        //    sbHeight = 0;
+        //}
         return sbHeight;
     }
 
@@ -1964,16 +1974,22 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mIconController.showSystemIconArea(animate);
             }
         }
-
+/*
         if ((diff1 & StatusBarManager.DISABLE_CLOCK) != 0) {
             boolean visible = (state1 & StatusBarManager.DISABLE_CLOCK) == 0;
             mIconController.setClockVisibility(visible);
         }
+*/
         if ((diff1 & StatusBarManager.DISABLE_EXPAND) != 0) {
             if ((state1 & StatusBarManager.DISABLE_EXPAND) != 0) {
                 animateCollapsePanels();
             }
         }
+
+        showStatusBarIconBattery();
+        showStatusBarIconTime();
+        setStatusBarBackgroundColor();
+        setNavigationBarBackgroundColor();
 
         if ((diff1 & (StatusBarManager.DISABLE_HOME
                         | StatusBarManager.DISABLE_RECENT
@@ -2493,6 +2509,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Integer.toHexString(vis), Integer.toHexString(mask),
                 Integer.toHexString(oldVal), Integer.toHexString(newVal),
                 Integer.toHexString(diff)));
+
+        boolean prop = SystemProperties.getBoolean("persist.statusbar", true);
+        mStatusBarView.setVisibility( prop ? View.VISIBLE : View.INVISIBLE);
         if (diff != 0) {
             // we never set the recents bit via this method, so save the prior state to prevent
             // clobbering the bit below

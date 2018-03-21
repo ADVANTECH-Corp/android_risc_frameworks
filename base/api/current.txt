@@ -2827,6 +2827,46 @@ package android.accounts {
 
 }
 
+package android.advsdklib {
+
+  public class AdvSdklib {
+    ctor public AdvSdklib(android.content.Context);
+    method public android.text.format.Time formatDateTime(java.lang.String);
+    method public android.advsdklib.AdvSdklib.BatteryStatus getBatteryStatus();
+    method public java.util.Set<android.bluetooth.BluetoothDevice> getBluetoothBondedDevices();
+    method public android.advsdklib.AdvSdklib.MemoryStatus getMemoryStatus();
+    method public java.util.List<android.net.wifi.ScanResult> getWifiScanResults();
+    method public boolean isKioskModeSet();
+    method public boolean isNavigationBarShow();
+    method public boolean isStatusBarShow();
+    method public void setKioskMode(android.view.Window, boolean);
+    method public void showNavigationBar(android.view.Window, boolean);
+    method public void showStatusBar(android.view.Window, boolean);
+    method public void startGetBatteryStatus();
+    method public void stopGetBatteryStatus();
+    field public android.advsdklib.AdvSdklib.BatteryStatus mBatteryStatus;
+  }
+
+  public class AdvSdklib.BatteryStatus {
+    ctor public AdvSdklib.BatteryStatus();
+    method public java.lang.String getHealth();
+    method public int getLevelPercent();
+    method public java.lang.String getPlugged();
+    method public java.lang.String getStatus();
+    method public float getTemperature();
+    method public float getVoltage();
+    method public void initBatteryStatus();
+  }
+
+  public class AdvSdklib.MemoryStatus {
+    ctor public AdvSdklib.MemoryStatus();
+    method public long getAvailMemory();
+    method public long getTotalMemory();
+    method public void initMemoryStatus();
+  }
+
+}
+
 package android.animation {
 
   public abstract class Animator implements java.lang.Cloneable {
@@ -23067,6 +23107,142 @@ package android.os {
     ctor public IAdvOtaService.Stub();
     method public android.os.IBinder asBinder();
     method public static android.os.IAdvOtaService asInterface(android.os.IBinder);
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
+  }
+
+  public abstract interface IAdvSdkService implements android.os.IInterface {
+    method public abstract void allowNonMarketAppsInstall(boolean) throws android.os.RemoteException;
+    method public abstract void disableApplication(java.lang.String) throws android.os.RemoteException;
+    method public abstract void enableAdb(boolean) throws android.os.RemoteException;
+    method public abstract void enableAirplaneMode(boolean) throws android.os.RemoteException;
+    method public abstract void enableAllowAddUser(boolean) throws android.os.RemoteException;
+    method public abstract void enableAllowRemoveUser(boolean) throws android.os.RemoteException;
+    method public abstract void enableApplication(java.lang.String) throws android.os.RemoteException;
+    method public abstract void enableApplicationNotification(java.lang.String, boolean) throws android.os.RemoteException;
+    method public abstract void enableAutoScreenRotation(boolean) throws android.os.RemoteException;
+    method public abstract void enableAutoTime(boolean) throws android.os.RemoteException;
+    method public abstract void enableAutoTimeZone(boolean) throws android.os.RemoteException;
+    method public abstract void enableBluetooth(boolean) throws android.os.RemoteException;
+    method public abstract void enableColorInversion(boolean) throws android.os.RemoteException;
+    method public abstract void enableDataRoaming(boolean) throws android.os.RemoteException;
+    method public abstract void enableDeveloperOptions(boolean) throws android.os.RemoteException;
+    method public abstract void enableFactoryReset(boolean) throws android.os.RemoteException;
+    method public abstract void enableLargeText(boolean) throws android.os.RemoteException;
+    method public abstract void enableLocation(boolean) throws android.os.RemoteException;
+    method public abstract void enableLockScreen(boolean) throws android.os.RemoteException;
+    method public abstract void enableLockScreenNotification(boolean) throws android.os.RemoteException;
+    method public abstract void enableManagedAppInfoPage(boolean) throws android.os.RemoteException;
+    method public abstract void enableMobileData(boolean) throws android.os.RemoteException;
+    method public abstract void enablePowerInstantlyLock(boolean) throws android.os.RemoteException;
+    method public abstract void enableShowPassword(boolean) throws android.os.RemoteException;
+    method public abstract void enableStayAwakeForCharging(boolean) throws android.os.RemoteException;
+    method public abstract void enableTextHighContrast(boolean) throws android.os.RemoteException;
+    method public abstract void enableVisiblePattern(boolean) throws android.os.RemoteException;
+    method public abstract void enableWifi(boolean) throws android.os.RemoteException;
+    method public abstract void enableWifiTethering(boolean) throws android.os.RemoteException;
+    method public abstract int getAlarmVolume() throws android.os.RemoteException;
+    method public abstract java.lang.String[] getAllTimeZoneIDs() throws android.os.RemoteException;
+    method public abstract java.lang.String[] getAllTimeZoneNames() throws android.os.RemoteException;
+    method public abstract float getAnimatorDurationScale() throws android.os.RemoteException;
+    method public abstract java.lang.String getAutoStartApplication() throws android.os.RemoteException;
+    method public abstract int getBrightness() throws android.os.RemoteException;
+    method public abstract java.lang.String getDateTime() throws android.os.RemoteException;
+    method public abstract float getFontSize() throws android.os.RemoteException;
+    method public abstract java.lang.String getLanguage() throws android.os.RemoteException;
+    method public abstract int getLocationMode() throws android.os.RemoteException;
+    method public abstract int getMediaVolume() throws android.os.RemoteException;
+    method public abstract int getMobileNetworkMode() throws android.os.RemoteException;
+    method public abstract int getNavigationBarColor() throws android.os.RemoteException;
+    method public abstract int getNotificationVolume() throws android.os.RemoteException;
+    method public abstract int getPointerSpeed() throws android.os.RemoteException;
+    method public abstract java.lang.String getScreenLockInfo() throws android.os.RemoteException;
+    method public abstract int getScreenLockTimeout() throws android.os.RemoteException;
+    method public abstract int getScreenRotation() throws android.os.RemoteException;
+    method public abstract int getScreenTimeout() throws android.os.RemoteException;
+    method public abstract int getStatusBarColor() throws android.os.RemoteException;
+    method public abstract java.lang.String[] getSystemAllLanguageName() throws android.os.RemoteException;
+    method public abstract java.lang.String[] getSystemAllLanguageTag() throws android.os.RemoteException;
+    method public abstract java.lang.String getTimeZone() throws android.os.RemoteException;
+    method public abstract float getTransitionAnimationScale() throws android.os.RemoteException;
+    method public abstract java.lang.String getUsbConfigurationOption() throws android.os.RemoteException;
+    method public abstract java.lang.String[] getUsersID() throws android.os.RemoteException;
+    method public abstract java.lang.String[] getUsersName() throws android.os.RemoteException;
+    method public abstract float getWindowAnimationScale() throws android.os.RemoteException;
+    method public abstract boolean is24HourFormat() throws android.os.RemoteException;
+    method public abstract boolean isAdbEnabled() throws android.os.RemoteException;
+    method public abstract boolean isAirplaneModeEnabled() throws android.os.RemoteException;
+    method public abstract boolean isAllowAddUserEnabled() throws android.os.RemoteException;
+    method public abstract boolean isAllowRemoveUserEnabled() throws android.os.RemoteException;
+    method public abstract boolean isApplicationNotificationEnabled(java.lang.String) throws android.os.RemoteException;
+    method public abstract boolean isAutoScreenRotationEnabled() throws android.os.RemoteException;
+    method public abstract boolean isAutoTimeEnabled() throws android.os.RemoteException;
+    method public abstract boolean isAutoTimeZoneEnabled() throws android.os.RemoteException;
+    method public abstract boolean isBackButtonShow() throws android.os.RemoteException;
+    method public abstract boolean isBatteryIconShow() throws android.os.RemoteException;
+    method public abstract boolean isBluetoothEnabled() throws android.os.RemoteException;
+    method public abstract boolean isColorInversionEnabled() throws android.os.RemoteException;
+    method public abstract boolean isDataRoamingEnabled() throws android.os.RemoteException;
+    method public abstract boolean isDeveloperOptionsEnabled() throws android.os.RemoteException;
+    method public abstract boolean isFactoryResetEnabled() throws android.os.RemoteException;
+    method public abstract boolean isHomeButtonShow() throws android.os.RemoteException;
+    method public abstract boolean isLargeTextEnabled() throws android.os.RemoteException;
+    method public abstract boolean isLocationEnabled() throws android.os.RemoteException;
+    method public abstract boolean isLockScreenEnabled() throws android.os.RemoteException;
+    method public abstract boolean isLockScreenNotificationEnabled() throws android.os.RemoteException;
+    method public abstract boolean isManagedAppInfoPageEnabled() throws android.os.RemoteException;
+    method public abstract boolean isMobileDataEnabled() throws android.os.RemoteException;
+    method public abstract boolean isNonMarketAppsInstallAllowed() throws android.os.RemoteException;
+    method public abstract boolean isPowerInstantlyLockEnabled() throws android.os.RemoteException;
+    method public abstract boolean isQuickSettingMenuShow() throws android.os.RemoteException;
+    method public abstract boolean isRecentButtonShow() throws android.os.RemoteException;
+    method public abstract boolean isShowPasswordEnabled() throws android.os.RemoteException;
+    method public abstract boolean isStayAwakeForChargingEnabled() throws android.os.RemoteException;
+    method public abstract boolean isTextHighContrastEnabled() throws android.os.RemoteException;
+    method public abstract boolean isTimeIconShow() throws android.os.RemoteException;
+    method public abstract boolean isVisiblePatternEnabled() throws android.os.RemoteException;
+    method public abstract boolean isWifiEnabled() throws android.os.RemoteException;
+    method public abstract boolean isWifiTetheringEnabled() throws android.os.RemoteException;
+    method public abstract void removeApplication(java.lang.String) throws android.os.RemoteException;
+    method public abstract void removeUser(int) throws android.os.RemoteException;
+    method public abstract void set24HourFormat(boolean) throws android.os.RemoteException;
+    method public abstract void setAlarmVolume(int) throws android.os.RemoteException;
+    method public abstract void setAnimatorDurationScale(float) throws android.os.RemoteException;
+    method public abstract void setAutoStartApplication(java.lang.String) throws android.os.RemoteException;
+    method public abstract void setBrightness(int) throws android.os.RemoteException;
+    method public abstract void setDateTime(int, int, int, int, int, int) throws android.os.RemoteException;
+    method public abstract void setFontSize(float) throws android.os.RemoteException;
+    method public abstract void setLanguage(java.lang.String) throws android.os.RemoteException;
+    method public abstract void setLocationMode(int) throws android.os.RemoteException;
+    method public abstract void setMediaVolume(int) throws android.os.RemoteException;
+    method public abstract void setMobileNetworkMode(int) throws android.os.RemoteException;
+    method public abstract void setNavigationBarColor(int) throws android.os.RemoteException;
+    method public abstract void setNotificationVolume(int) throws android.os.RemoteException;
+    method public abstract void setPointerSpeed(int) throws android.os.RemoteException;
+    method public abstract void setScreenLockInfo(java.lang.String) throws android.os.RemoteException;
+    method public abstract void setScreenLockTimeout(int) throws android.os.RemoteException;
+    method public abstract void setScreenRotation(int) throws android.os.RemoteException;
+    method public abstract void setScreenTimeout(int) throws android.os.RemoteException;
+    method public abstract void setSsidDefaultAccount(java.lang.String, java.lang.String) throws android.os.RemoteException;
+    method public abstract void setStatusBarColor(int) throws android.os.RemoteException;
+    method public abstract void setTimeZone(java.lang.String) throws android.os.RemoteException;
+    method public abstract void setTransitionAnimationScale(float) throws android.os.RemoteException;
+    method public abstract void setUsbConfigurationOption(java.lang.String) throws android.os.RemoteException;
+    method public abstract void setWindowAnimationScale(float) throws android.os.RemoteException;
+    method public abstract void showBackButton(boolean) throws android.os.RemoteException;
+    method public abstract void showBatteryIcon(boolean) throws android.os.RemoteException;
+    method public abstract void showHomeButton(boolean) throws android.os.RemoteException;
+    method public abstract void showQuickSettingMenu(boolean) throws android.os.RemoteException;
+    method public abstract void showRecentButton(boolean) throws android.os.RemoteException;
+    method public abstract void showTimeIcon(boolean) throws android.os.RemoteException;
+    method public abstract void startApplication(java.lang.String) throws android.os.RemoteException;
+    method public abstract void startBluetoothDiscovery() throws android.os.RemoteException;
+    method public abstract void updateApplication(java.lang.String) throws android.os.RemoteException;
+  }
+
+  public static abstract class IAdvSdkService.Stub extends android.os.Binder implements android.os.IAdvSdkService {
+    ctor public IAdvSdkService.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.os.IAdvSdkService asInterface(android.os.IBinder);
     method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
   }
 
