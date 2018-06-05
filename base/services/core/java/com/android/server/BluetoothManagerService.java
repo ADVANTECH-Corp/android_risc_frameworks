@@ -1681,6 +1681,10 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                                                         PackageManager.FEATURE_BLUETOOTH_LE)) {
                             Intent i = new Intent(IBluetoothGatt.class.getName());
                             doBind(i, mConnection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT, UserHandle.CURRENT);
+                        // [Advantech] Fix-Non-Bluetooth_le.xml-Error
+                        } else {
+                            Log.d(TAG, "Calling BluetoothGattServiceUp");
+                            onBluetoothGattServiceUp();
                         }
                     }
                     sendBleStateChanged(prevState, newState);
