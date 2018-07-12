@@ -60,6 +60,8 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import java.text.ParseException;
 
+import android.content.pm.IPackageInstallObserver;
+
 public class AdvSdklib {
     private static final String TAG = "android.advsdklib.AdvSdklib";
     private Context mContext;
@@ -83,6 +85,10 @@ public class AdvSdklib {
             return availMemory;
 	}
     }
+	public interface advCallback{
+		void onSuccess(String data);
+		void onError(String error);
+	}
 	
 	public class BatteryStatus {
 		float voltage;
@@ -211,6 +217,44 @@ public class AdvSdklib {
 	this.mContext = context;
     }
 
+	private class PackageInstallObserver extends IPackageInstallObserver.Stub {
+		private final PackageInfo pginfo;
+		private final advCallback callback;
+		public PackageInstallObserver(PackageInfo info, advCallback advcallback) {
+			pginfo = info;
+			callback = advcallback;
+		}
+		@Override
+		public void packageInstalled(String packageName, int returnCode) {
+			String info;
+			if (packageName != null && !packageName.equals(pginfo.packageName))  {
+				info = "Package doesn't have expected package name.";
+				callback.onError(info);
+				return;
+			}
+			if (returnCode == PackageManager.INSTALL_SUCCEEDED) {	
+				info = "Success";
+				callback.onSuccess(info);
+				return;
+			} else if (returnCode == PackageManager.INSTALL_FAILED_VERSION_DOWNGRADE) {
+				info = "Current version of " + pginfo.packageName + " higher than the version to be installed. It was not reinstalled.";
+				callback.onError(info);
+				return;
+			} else {
+				info = "Installing package " + pginfo.packageName + " failed.";
+				callback.onError(info);
+				return;
+			}
+		}
+	}
+
+	public void installApplicationAsync(String pathFile, advCallback callback){
+		File apkFile = new File(pathFile);
+		PackageManager mPackageManager = mContext.getPackageManager();
+		PackageInfo info = mPackageManager.getPackageArchiveInfo(pathFile, PackageManager.GET_ACTIVITIES);
+		mPackageManager.installPackage(Uri.fromFile(apkFile), new PackageInstallObserver(info, callback), PackageManager.INSTALL_REPLACE_EXISTING, null);
+	}
+	
     //AdvSdklib api implement
  /********************************************** UI ************************************************************/
 
