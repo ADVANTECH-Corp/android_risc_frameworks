@@ -486,5 +486,9 @@ interface IAdvSdkService{
     void setAnimatorDurationScale(float scale);
 	float getAnimatorDurationScale();
 	
-	
+    //about vncserver control
+	/**
+    */
+    boolean startVncServer(String passwd);	
+    boolean stopVncServer();
 }
