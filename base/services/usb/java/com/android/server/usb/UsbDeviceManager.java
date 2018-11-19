@@ -337,8 +337,12 @@ public class UsbDeviceManager {
                 }
                 mCurrentFunctionsApplied = mCurrentFunctions.equals(
                         SystemProperties.get(USB_STATE_PROPERTY));
-                mAdbEnabled = UsbManager.containsFunction(getDefaultFunctions(),
-                        UsbManager.USB_FUNCTION_ADB);
+                // AIM_Android 2.1 +++
+                //mAdbEnabled = UsbManager.containsFunction(getDefaultFunctions(),
+                //        UsbManager.USB_FUNCTION_ADB);
+                mAdbEnabled = SystemProperties.getBoolean("persist.setting.usb.debug.val", true);
+//                 Slog.w(TAG, "AIM_Andorid mAdbEnabled: " + mAdbEnabled);
+                // AIM_Android 2.1 ---
                 setEnabledFunctions(null, false);
 
                 String state = FileUtils.readTextFile(new File(STATE_PATH), 0, null).trim();
