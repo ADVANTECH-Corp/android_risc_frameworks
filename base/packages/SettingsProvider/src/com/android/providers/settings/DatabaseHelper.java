@@ -2257,6 +2257,11 @@ class DatabaseHelper extends SQLiteOpenHelper {
     private void loadVolumeLevels(SQLiteDatabase db) {
         SQLiteStatement stmt = null;
         try {
+                //Kevin customization  Set default of media/alarm/ring volume
+                AudioSystem.DEFAULT_STREAM_VOLUME[AudioSystem.STREAM_MUSIC] = SystemProperties.getInt("persist.def.media.volume", 11);
+                AudioSystem.DEFAULT_STREAM_VOLUME[AudioSystem.STREAM_RING] = SystemProperties.getInt("persist.def.ring.volume", 5);
+                AudioSystem.DEFAULT_STREAM_VOLUME[AudioSystem.STREAM_ALARM] = SystemProperties.getInt("persist.def.alarm.volume", 6);
+                //~Kevin
             stmt = db.compileStatement("INSERT OR IGNORE INTO system(name,value)"
                     + " VALUES(?,?);");
 
