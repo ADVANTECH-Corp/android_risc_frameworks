@@ -845,7 +845,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBluetoothController = new BluetoothControllerImpl(mContext, mHandlerThread.getLooper());
         mSecurityController = new SecurityControllerImpl(mContext);
         boolean isSupportRotation = (!SystemProperties.getBoolean("persist.setting.acc.autorotate", true));
-        if (mContext.getResources().getBoolean(R.bool.config_showRotationLock) && isSupportRotation) {
+        if (mContext.getResources().getBoolean(R.bool.config_showRotationLock) && isSupportRotation && !SystemProperties.getBoolean("persist.cust.btn.rotate.hide",false)/*AIM_Android 2.1*/) {
             mRotationLockController = new RotationLockControllerImpl(mContext);
         }
         mUserInfoController = new UserInfoController(mContext);

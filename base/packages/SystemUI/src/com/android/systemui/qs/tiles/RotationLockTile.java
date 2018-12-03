@@ -61,7 +61,11 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
     protected void handleClick() {
         if (mController == null) return;
         MetricsLogger.action(mContext, getMetricsCategory(), !mState.value);
-        final boolean newState = !mState.value;
+        // AIM_Android 2.1 +++
+        boolean newState = !mState.value;
+        if(SystemProperties.getBoolean("persist.cust.btn.rotate.hide",false))
+            newState = true;
+        // AIM_Android 2.1 ---
         mController.setRotationLocked(newState);
         refreshState(newState ? UserBoolean.USER_TRUE : UserBoolean.USER_FALSE);
     }
