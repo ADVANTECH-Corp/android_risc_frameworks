@@ -3489,6 +3489,43 @@ public final class ActivityManagerService extends ActivityManagerNative
             // error message and don't try to start anything.
             return false;
         }
+        
+        //AIM_Android 2.1 +++
+        Slog.i("RyanTest20170706", "RyanTest20170706: custDefaultLauncher Test");
+
+        final String custDefaultLauncherPackageName = SystemProperties.get("persist.cust.launcher");
+        // final String custDefaultLauncherPackageActivityName = SystemProperties.get("persist.cust.launcheract");
+        if(custDefaultLauncherPackageName.length()>0){
+
+            String mActivityInfoName="";
+            // String mActivityInfoName=   custDefaultLauncherPackageActivityName;
+
+            final PackageManager mPm = mContext.getPackageManager();
+            Intent intent=new Intent();
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setPackage(custDefaultLauncherPackageName);
+            ResolveInfo ri=mPm.resolveActivity(intent,0);
+            //Slog.i("RyanTest20170706", "RyanTest20170706: custDefaultLauncher: ri.activityInfo.name"+ri.activityInfo.name);
+            mActivityInfoName=ri.activityInfo.name;
+
+            ComponentName DefaultLauncher=new ComponentName(custDefaultLauncherPackageName,mActivityInfoName);
+            
+            ArrayList<ResolveInfo> homeActivities = new ArrayList<ResolveInfo>();
+            ComponentName currentDefaultHome = mPm.getHomeActivities(homeActivities);
+            ComponentName []mHomeComponentSet = new ComponentName[homeActivities.size()];
+            for (int i = 0; i < homeActivities.size(); i++) {
+                final ResolveInfo candidate = homeActivities.get(i);
+                final ActivityInfo info = candidate.activityInfo;
+                ComponentName activityName = new ComponentName(info.packageName, info.name);
+                mHomeComponentSet[i] = activityName;
+            }
+            IntentFilter mHomeFilter = new IntentFilter(Intent.ACTION_MAIN);
+            mHomeFilter.addCategory(Intent.CATEGORY_HOME);
+            mHomeFilter.addCategory(Intent.CATEGORY_DEFAULT);
+            List<ComponentName>Activities=new ArrayList();
+            mPm.replacePreferredActivity(mHomeFilter, IntentFilter.MATCH_CATEGORY_EMPTY,mHomeComponentSet, DefaultLauncher);
+        }
+        //AIM_Android 2.1 ---
         Intent intent = getHomeIntent();
         ActivityInfo aInfo =
             resolveActivityInfo(intent, STOCK_PM_FLAGS, userId);

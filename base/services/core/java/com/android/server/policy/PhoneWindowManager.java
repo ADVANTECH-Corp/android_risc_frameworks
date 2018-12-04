@@ -129,6 +129,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList; //AIM_Android 2.1 +++
 
 import static android.view.WindowManager.LayoutParams.*;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.LID_ABSENT;
@@ -6443,6 +6444,41 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startDockOrHome(boolean fromHomeKey, boolean awakenFromDreams) {
+        //AIM_Android 2.1 +++
+        //Slog.i("RyanTest20170706", " void startDockOrHome");
+        final String custDefaultLauncherPackageName = SystemProperties.get("persist.cust.launcher");
+        // final String custDefaultLauncherPackageActivityName = SystemProperties.get("persist.cust.launcheract");
+        if(custDefaultLauncherPackageName.length()>0){
+
+            String mActivityInfoName="";
+            // String mActivityInfoName=   custDefaultLauncherPackageActivityName;
+
+            final PackageManager mPm = mContext.getPackageManager();
+            Intent intent=new Intent();
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setPackage(custDefaultLauncherPackageName);
+            ResolveInfo ri=mPm.resolveActivity(intent,0);
+            //Slog.i("RyanTest20170706", "RyanTest20170706: startDockOrHome : ri.activityInfo.name"+ri.activityInfo.name);
+            mActivityInfoName=ri.activityInfo.name;
+
+            ComponentName DefaultLauncher=new ComponentName(custDefaultLauncherPackageName,mActivityInfoName);
+
+            ArrayList<ResolveInfo> homeActivities = new ArrayList<ResolveInfo>();
+            ComponentName currentDefaultHome = mPm.getHomeActivities(homeActivities);
+            ComponentName []mHomeComponentSet = new ComponentName[homeActivities.size()];
+            for (int i = 0; i < homeActivities.size(); i++) {
+                final ResolveInfo candidate = homeActivities.get(i);
+                final ActivityInfo info = candidate.activityInfo;
+                ComponentName activityName = new ComponentName(info.packageName, info.name);
+                mHomeComponentSet[i] = activityName;
+            }
+            IntentFilter mHomeFilter = new IntentFilter(Intent.ACTION_MAIN);
+            mHomeFilter.addCategory(Intent.CATEGORY_HOME);
+            mHomeFilter.addCategory(Intent.CATEGORY_DEFAULT);
+            List<ComponentName>Activities=new ArrayList();
+            mPm.replacePreferredActivity(mHomeFilter, IntentFilter.MATCH_CATEGORY_EMPTY,mHomeComponentSet, DefaultLauncher);
+        }
+        //AIM_Android 2.1 ---
         if (awakenFromDreams) {
             awakenDreams();
         }
