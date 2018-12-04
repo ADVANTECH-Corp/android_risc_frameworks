@@ -18,6 +18,7 @@ package com.android.systemui.statusbar;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources; //AIM_Android 2.1
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
@@ -43,6 +44,8 @@ import com.android.systemui.tuner.TunerService.Tunable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import android.os.SystemProperties; //AIM_Android 2.1
 
 // Intimately tied to the design of res/layout/signal_cluster_view.xml
 public class SignalClusterView
@@ -140,7 +143,13 @@ public class SignalClusterView
         if (DEBUG) Log.d(TAG, "SecurityController=" + sc);
         mSC = sc;
         mSC.addCallback(this);
-        mVpnVisible = mSC.isVpnEnabled();
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            mVpnVisible = false;
+        else
+            mVpnVisible = mSC.isVpnEnabled();        
+        //AIM_Android 2.1 ---
     }
 
     @Override
@@ -204,7 +213,13 @@ public class SignalClusterView
         post(new Runnable() {
             @Override
             public void run() {
-                mVpnVisible = mSC.isVpnEnabled();
+                //AIM_Android 2.1 +++
+                String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+                if("true".equalsIgnoreCase(sStatusIconHide))                
+                    mVpnVisible = false;  
+                else
+                    mVpnVisible = mSC.isVpnEnabled();
+                //AIM_Android 2.1 ---
                 apply();
             }
         });
@@ -213,7 +228,13 @@ public class SignalClusterView
     @Override
     public void setWifiIndicators(boolean enabled, IconState statusIcon, IconState qsIcon,
             boolean activityIn, boolean activityOut, String description) {
-        mWifiVisible = statusIcon.visible && !mBlockWifi;
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))        
+            mWifiVisible = false;  
+        else
+            mWifiVisible = statusIcon.visible && !mBlockWifi;
+        //AIM_Android 2.1 ---
         mWifiStrengthId = statusIcon.icon;
         mWifiDescription = statusIcon.contentDescription;
 
@@ -228,7 +249,13 @@ public class SignalClusterView
         if (state == null) {
             return;
         }
-        state.mMobileVisible = statusIcon.visible && !mBlockMobile;
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            state.mMobileVisible = false;   
+        else
+            state.mMobileVisible = statusIcon.visible && !mBlockMobile;
+        //AIM_Android 2.1 ---
         state.mMobileStrengthId = statusIcon.icon;
         state.mMobileTypeId = statusType;
         state.mMobileDescription = statusIcon.contentDescription;
@@ -240,7 +267,13 @@ public class SignalClusterView
 
     @Override
     public void setEthernetIndicators(IconState state) {
-        mEthernetVisible = state.visible && !mBlockEthernet;
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            mEthernetVisible = false; 
+        else
+            mEthernetVisible = state.visible && !mBlockEthernet;
+        //AIM_Android 2.1 ---
         mEthernetIconId = state.icon;
         mEthernetDescription = state.contentDescription;
 
@@ -249,7 +282,13 @@ public class SignalClusterView
 
     @Override
     public void setNoSims(boolean show) {
-        mNoSimsVisible = show && !mBlockMobile;
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            mNoSimsVisible = false;
+        else
+            mNoSimsVisible = show && !mBlockMobile;
+        //AIM_Android 2.1 ---
         apply();
     }
 
@@ -306,7 +345,13 @@ public class SignalClusterView
 
     @Override
     public void setIsAirplaneMode(IconState icon) {
-        mIsAirplaneMode = icon.visible && !mBlockAirplane;
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            mIsAirplaneMode = false;  
+        else
+            mIsAirplaneMode = icon.visible && !mBlockAirplane;
+        //AIM_Android 2.1 ---
         mAirplaneIconId = icon.icon;
         mAirplaneContentDescription = icon.contentDescription;
 
@@ -421,7 +466,11 @@ public class SignalClusterView
             if (state.apply(anyMobileVisible)) {
                 if (!anyMobileVisible) {
                     firstMobileTypeId = state.mMobileTypeId;
-                    anyMobileVisible = true;
+                    //AIM_Android 2.1 +++
+                    String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+                    if("false".equalsIgnoreCase(sStatusIconHide))
+                        anyMobileVisible = true;
+                    //AIM_Android 2.1 ---
                 }
             }
         }
@@ -542,6 +591,22 @@ public class SignalClusterView
                         (mMobileVisible ? "VISIBLE" : "GONE"), mMobileStrengthId, mMobileTypeId));
 
             mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
+            
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))
+            {
+                mMobileType.setVisibility(View.GONE);  
+                //mDataActivity.setVisibility(View.GONE);
+                //mMobileActivity.setVisibility(View.GONE);
+            }
+            else
+            {
+                mMobileType.setVisibility(mMobileTypeId != 0 ? View.VISIBLE : View.GONE);
+                //mDataActivity.setVisibility(mDataActivityId != 0 ? View.VISIBLE : View.GONE);
+                //mMobileActivity.setVisibility(mMobileActivityId != 0 ? View.VISIBLE : View.GONE);
+            }
+            //AIM_Android 2.1 ---
 
             return mMobileVisible;
         }

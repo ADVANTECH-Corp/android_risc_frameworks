@@ -101,6 +101,11 @@ public class BatteryMeterView extends View implements DemoMode,
 
     public BatteryMeterView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            this.setVisibility(View.GONE);
+        //AIM_Android 2.1 ---
 
         final Resources res = context.getResources();
         TypedArray atts = context.obtainStyledAttributes(attrs, R.styleable.BatteryMeterView,

@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.IRemoteCallback;
 import android.os.RemoteException;
 import android.os.SystemProperties;
+import android.provider.Settings; //AIM_Android 2.1
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings.Global;
@@ -173,7 +174,13 @@ public class PhoneStatusBarPolicy implements Callback {
         // hotspot
         mService.setIcon(SLOT_HOTSPOT, R.drawable.stat_sys_hotspot, 0,
                 mContext.getString(R.string.accessibility_status_bar_hotspot));
-        mService.setIconVisibility(SLOT_HOTSPOT, mHotspot.isHotspotEnabled());
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))                
+            mService.setIconVisibility(SLOT_HOTSPOT, false);
+        else
+            mService.setIconVisibility(SLOT_HOTSPOT, mHotspot.isHotspotEnabled());
+        //AIM_Android 2.1 ---
         mHotspot.addCallback(mHotspotCallback);
 
         // managed profile
@@ -195,7 +202,14 @@ public class PhoneStatusBarPolicy implements Callback {
                 : R.drawable.stat_sys_alarm, 0, null);
         //mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm);
         boolean prop = SystemProperties.getBoolean("persist.sb.ic.alarm_clock", true);
-        mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm && prop);
+        //mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm && prop);
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            mService.setIconVisibility(SLOT_ALARM_CLOCK, false);
+        else
+            mService.setIconVisibility(SLOT_ALARM_CLOCK, mCurrentUserSetup && hasAlarm && prop);
+        //AIM_Android 2.1 ---
     }
 
     private final void updateSimState(Intent intent) {
@@ -268,8 +282,19 @@ public class PhoneStatusBarPolicy implements Callback {
             mService.setIcon(SLOT_ZEN, zenIconId, 0, zenDescription);
         }
         if (zenVisible != mZenVisible) {
-            mService.setIconVisibility(SLOT_ZEN, zenVisible);
-            mZenVisible = zenVisible;
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))
+            {
+                mService.setIconVisibility(SLOT_ZEN, false);
+                mZenVisible = false;
+            }
+            else
+            {
+                mService.setIconVisibility(SLOT_ZEN, zenVisible);
+                mZenVisible = zenVisible;
+            }
+            //AIM_Android 2.1 ---
         }
         boolean propZen = SystemProperties.getBoolean("persist.sb.ic.zen", true);
         mService.setIconVisibility(SLOT_ZEN, zenVisible && (propZen));
@@ -279,8 +304,21 @@ public class PhoneStatusBarPolicy implements Callback {
         if (volumeVisible != mVolumeVisible) {
             //mService.setIconVisibility(SLOT_VOLUME, volumeVisible);
             boolean prop = SystemProperties.getBoolean("persist.sb.ic.volume", true);
-            mService.setIconVisibility(SLOT_VOLUME, volumeVisible && (prop));
-            mVolumeVisible = volumeVisible;
+            //mService.setIconVisibility(SLOT_VOLUME, volumeVisible && (prop));
+            //mVolumeVisible = volumeVisible;
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))
+            {
+                mService.setIconVisibility(SLOT_VOLUME, false);
+                mVolumeVisible = false;
+            }
+            else
+            {
+                mService.setIconVisibility(SLOT_VOLUME, volumeVisible && (prop));
+                mVolumeVisible = volumeVisible;
+            }
+            //AIM_Android 2.1 ---
         }
         updateAlarm();
     }
@@ -311,7 +349,14 @@ public class PhoneStatusBarPolicy implements Callback {
         mService.setIcon(SLOT_BLUETOOTH, iconId, 0, contentDescription);
         //mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled);
         boolean prop = SystemProperties.getBoolean("persist.sb.ic.bluetooth", true);
-        mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled && (prop));
+        //mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled && (prop));
+        //AIM_Android 2.1 +++
+        String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+        if("true".equalsIgnoreCase(sStatusIconHide))
+            mService.setIconVisibility(SLOT_BLUETOOTH, false);
+        else
+            mService.setIconVisibility(SLOT_BLUETOOTH, bluetoothEnabled && (prop));
+        //AIM_Android 2.1 ---
     }
 
     private final void updateTTY(Intent intent) {
@@ -328,7 +373,14 @@ public class PhoneStatusBarPolicy implements Callback {
                     mContext.getString(R.string.accessibility_tty_enabled));
             //mService.setIconVisibility(SLOT_TTY, true);
             boolean prop = SystemProperties.getBoolean("persist.sb.ic.tty", true);
-            mService.setIconVisibility(SLOT_TTY, (prop));
+            //mService.setIconVisibility(SLOT_TTY, (prop));
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))                    
+                mService.setIconVisibility(SLOT_TTY, false);
+            else
+                mService.setIconVisibility(SLOT_TTY, true && prop);
+            //AIM_Android 2.1 ---
         } else {
             // TTY is off
             if (DEBUG) Log.v(TAG, "updateTTY: set TTY off");
@@ -352,7 +404,14 @@ public class PhoneStatusBarPolicy implements Callback {
                     mContext.getString(R.string.accessibility_casting));
             //mService.setIconVisibility(SLOT_CAST, true);
             boolean prop = SystemProperties.getBoolean("persist.sb.ic.cast", true);
-            mService.setIconVisibility(SLOT_CAST, prop);
+            //mService.setIconVisibility(SLOT_CAST, prop);
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))
+                mService.setIconVisibility(SLOT_CAST, false);
+            else
+                mService.setIconVisibility(SLOT_CAST, true && prop);
+            //AIM_Android 2.1 ---
         } else {
             // don't turn off the screen-record icon for a few seconds, just to make sure the user
             // has seen it
@@ -387,8 +446,21 @@ public class PhoneStatusBarPolicy implements Callback {
         if (mManagedProfileIconVisible != showIcon) {
             //mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon);
             boolean prop = SystemProperties.getBoolean("persist.sb.ic.managed_profile", true);
-            mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon && (prop));
-            mManagedProfileIconVisible = showIcon;
+            //mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon && (prop));
+            //mManagedProfileIconVisible = showIcon;
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))
+            {
+                mService.setIconVisibility(SLOT_MANAGED_PROFILE, false);
+                mManagedProfileIconVisible = false;
+            }
+            else
+            {
+                mService.setIconVisibility(SLOT_MANAGED_PROFILE, showIcon && (prop));
+                mManagedProfileIconVisible = showIcon;
+            }
+            //AIM_Android 2.1 ---
         }
     }
 
@@ -416,7 +488,14 @@ public class PhoneStatusBarPolicy implements Callback {
         public void onHotspotChanged(boolean enabled) {
             //mService.setIconVisibility(SLOT_HOTSPOT, enabled);
             boolean prop = SystemProperties.getBoolean("persist.sb.ic.hotspot", true);
-            mService.setIconVisibility(SLOT_HOTSPOT, enabled && prop);
+            //mService.setIconVisibility(SLOT_HOTSPOT, enabled && prop);
+            //AIM_Android 2.1 +++
+            String sStatusIconHide = SystemProperties.get("persist.cust.statusicon.hide", "false");
+            if("true".equalsIgnoreCase(sStatusIconHide))
+                mService.setIconVisibility(SLOT_HOTSPOT, false);
+            else
+                mService.setIconVisibility(SLOT_HOTSPOT, enabled && prop);
+            //AIM_Android 2.1 ---
         }
     };
 
