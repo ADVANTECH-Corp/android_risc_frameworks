@@ -213,4 +213,10 @@
 
     <!-- Default for Settings.Secure.NFC_PAYMENT_COMPONENT -->
     <string name="def_nfc_payment_component"></string>
+    
+    <!-- AIM_Android 2.1.1 Default for Settings.Secure.DEFAULT_INPUT_METHOD -->
+    <string name="def_input_method">com.android.inputmethod.latin/.LatinIME</string>
+    
+    <!-- AIM_Android 2.1.1 Default for Settings.Secure.ENABLED_INPUT_METHODS -->
+    <string name="def_enabled_input_method">com.android.inputmethod.latin/.LatinIME</string>
 </resources>

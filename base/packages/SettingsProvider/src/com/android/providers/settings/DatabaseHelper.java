@@ -2551,6 +2551,11 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadIntegerSetting(stmt, Settings.Secure.SLEEP_TIMEOUT,
                     R.integer.def_sleep_timeout);
+            //AIM_Android 2.1.1 +++
+            loadStringSettingFromCust(stmt, Settings.Secure.DEFAULT_INPUT_METHOD, R.string.def_input_method, "persist.lang.keyboard.def");
+            
+            loadStringSettingFromCust(stmt, Settings.Secure.ENABLED_INPUT_METHODS, R.string.def_enabled_input_method, "persist.lang.keyboard.def");
+            //AIM_Android 2.1.1 ---
 
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
@@ -2845,4 +2850,15 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadSetting(stmt, key, keyValue);
         }
     }
+    
+    //AIM_Android 2.1.1 +++
+    private void loadStringSettingFromCust(SQLiteStatement stmt, String key, int resid, String keyProperty) {
+        String keyValue = SystemProperties.get(keyProperty, null);
+        if (keyValue == null || keyValue.isEmpty()) {
+            loadSetting(stmt, key, mContext.getResources().getString(resid));
+        } else {
+            loadSetting(stmt, key, keyValue);
+        }
+    }
+    //AIM_Android 2.1.1 ---
 }
