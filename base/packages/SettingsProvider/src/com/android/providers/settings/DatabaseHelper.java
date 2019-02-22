@@ -2452,6 +2452,17 @@ class DatabaseHelper extends SQLiteOpenHelper {
         try {
             stmt = db.compileStatement("INSERT OR IGNORE INTO secure(name,value)"
                     + " VALUES(?,?);");
+                    
+            // AIM_Android 2.1.1 +++
+            String selectKeyboardLanguage = SystemProperties.get("persist.cust.kb.lang.def", "");
+            if (!selectKeyboardLanguage.equals("")) {
+                int kbLangresId = mContext.getResources().getIdentifier(selectKeyboardLanguage, "string", mContext.getPackageName());
+                if (kbLangresId != 0) {
+                    String enableInputMethods = "com.android.inputmethod.latin/.LatinIME;" + mContext.getResources().getString(kbLangresId);
+                    loadSetting(stmt, Settings.Secure.ENABLED_INPUT_METHODS, enableInputMethods);
+                }
+            }
+            // AIM_Android 2.1.1 ---
 
             loadStringSetting(stmt, Settings.Secure.LOCATION_PROVIDERS_ALLOWED,
                     R.string.def_location_providers_allowed);
