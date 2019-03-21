@@ -100,6 +100,8 @@ import java.util.List;
 import libcore.io.Streams;
 import libcore.util.Objects;
 
+import android.os.SystemProperties; // AIM_Android 2.1.1
+
 /*
  * Wraps the C++ InputManager and provides its callbacks.
  */
@@ -1326,6 +1328,7 @@ public class InputManagerService extends IInputManager.Stub
         try {
             speed = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.POINTER_SPEED, UserHandle.USER_CURRENT);
+            speed = SystemProperties.getInt("persist.lang.pointer_speed", speed); // AIM_Android 2.1.1
         } catch (SettingNotFoundException snfe) {
         }
         return speed;

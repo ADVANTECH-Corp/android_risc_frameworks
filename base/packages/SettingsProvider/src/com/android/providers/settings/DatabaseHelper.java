@@ -2404,8 +2404,8 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadUISoundEffectsSettings(stmt);
 
-            loadIntegerSetting(stmt, Settings.System.POINTER_SPEED,
-                    R.integer.def_pointer_speed);
+            loadIntegerSettingFromCust(stmt, Settings.System.POINTER_SPEED,
+                    R.integer.def_pointer_speed, "persist.lang.pointer_speed"); // AIM_Android 2.1.1
 
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,

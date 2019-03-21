@@ -45,6 +45,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.SystemProperties; // AIM_Android 2.1.1
+
 /**
  * Provides information about input devices and available key layouts.
  * <p>
@@ -674,6 +676,7 @@ public final class InputManager {
         try {
             speed = Settings.System.getInt(context.getContentResolver(),
                     Settings.System.POINTER_SPEED);
+            speed = SystemProperties.getInt("persist.lang.pointer_speed", speed); // AIM_Android 2.1.1
         } catch (SettingNotFoundException snfe) {
         }
         return speed;
@@ -698,6 +701,7 @@ public final class InputManager {
 
         Settings.System.putInt(context.getContentResolver(),
                 Settings.System.POINTER_SPEED, speed);
+        SystemProperties.set("persist.lang.pointer_speed", String.valueOf(speed)); // AIM_Android 2.1.1
     }
 
     /**
