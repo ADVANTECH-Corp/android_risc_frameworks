@@ -22,6 +22,10 @@ import android.provider.Settings;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+// AIM_Android 2.1.1 +++
+import android.os.SystemProperties;
+import android.util.Log;
+// AIM_Android 2.1.1 ---
 
 /* Tracks persisted settings for Wi-Fi and airplane mode interaction */
 final class WifiSettingsStore {
@@ -136,6 +140,13 @@ final class WifiSettingsStore {
         final ContentResolver cr = mContext.getContentResolver();
         mPersistWifiState = state;
         Settings.Global.putInt(cr, Settings.Global.WIFI_ON, state);
+
+        // AIM_Android 2.1.1 +++
+        if (state == WIFI_ENABLED)
+            SystemProperties.set("persist.wifi.enable","true");
+        else if (state == WIFI_DISABLED)
+            SystemProperties.set("persist.wifi.enable","false");
+        // AIM_Android 2.1.1 ---
     }
 
     /* Does Wi-Fi need to be disabled when airplane mode is on ? */
@@ -177,7 +188,19 @@ final class WifiSettingsStore {
     private int getPersistedWifiState() {
         final ContentResolver cr = mContext.getContentResolver();
         try {
-            return Settings.Global.getInt(cr, Settings.Global.WIFI_ON);
+            // AIM_Android 2.1.1 +++
+            Log.d("WifiStore", "getPersistedWifiState = "+ Settings.Global.getInt(cr, Settings.Global.WIFI_ON));
+            String strWifiEnable = SystemProperties.get("persist.wifi.enable");
+            Log.d("WifiStore", "persist.wifi.enable = "+ strWifiEnable);
+            if (strWifiEnable.equals(""))
+                return Settings.Global.getInt(cr, Settings.Global.WIFI_ON);
+            else if (strWifiEnable.equals("false")) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
+            // AIM_Android 2.1.1 ---
         } catch (Settings.SettingNotFoundException e) {
             Settings.Global.putInt(cr, Settings.Global.WIFI_ON, WIFI_DISABLED);
             return WIFI_DISABLED;

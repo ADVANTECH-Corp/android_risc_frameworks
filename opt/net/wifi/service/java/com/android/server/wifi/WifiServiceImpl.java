@@ -350,6 +350,15 @@ public final class WifiServiceImpl extends IWifiManager.Stub {
     public void checkAndStartWifi() {
         /* Check if wi-fi needs to be enabled */
         boolean wifiEnabled = mSettingsStore.isWifiToggleEnabled();
+
+        // AIM_Android 2.1.1 +++
+        String strWifiEnable = SystemProperties.get("persist.wifi.enable");
+        if (wifiEnabled && strWifiEnable.equals("false")) {
+            Slog.d(TAG, "persist.wifi.enable = false");
+            wifiEnabled = false;
+        }
+        // AIM_Android 2.1.1 ---
+
         Slog.i(TAG, "WifiService starting up with Wi-Fi " +
                 (wifiEnabled ? "enabled" : "disabled"));
 

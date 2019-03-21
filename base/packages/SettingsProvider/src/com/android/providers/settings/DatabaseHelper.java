@@ -2639,8 +2639,16 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadBooleanSetting(stmt, Settings.Global.PACKAGE_VERIFIER_ENABLE,
                     R.bool.def_package_verifier_enable);
 
-            loadBooleanSetting(stmt, Settings.Global.WIFI_ON,
+            // AIM_Android 2.1.1 +++
+            String strWifiEnable = SystemProperties.get("persist.wifi.enable");
+            if (strWifiEnable.equals(""))
+                loadBooleanSetting(stmt, Settings.Global.WIFI_ON,
                     R.bool.def_wifi_on);
+            else if (strWifiEnable.equals("false"))
+                loadSetting(stmt, Settings.Global.WIFI_ON, "0");
+            else
+                loadSetting(stmt, Settings.Global.WIFI_ON, "1");
+            // AIM_Android 2.1.1 ---
 
             loadBooleanSetting(stmt, Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON,
                     R.bool.def_networks_available_notification_on);
