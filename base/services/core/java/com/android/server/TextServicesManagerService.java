@@ -436,6 +436,15 @@ public class TextServicesManagerService extends ITextServicesManager.Stub {
                 }
                 return null;
             }
+            // AIM_Android 2.1.1 +++
+            int nSpellSubtype = SystemProperties.getInt("persist.lang.spell.lang",-1);
+            if (nSpellSubtype != -1) {
+                if (nSpellSubtype < sci.getSubtypeCount() && nSpellSubtype >= 0) {
+                    final SpellCheckerSubtype scs = sci.getSubtypeAt(nSpellSubtype);
+                    return scs;
+                }
+            }
+            // AIM_Android 2.1.1 +++
             final int hashCode;
             if (!TextUtils.isEmpty(subtypeHashCodeStr)) {
                 hashCode = Integer.valueOf(subtypeHashCodeStr);
@@ -714,16 +723,24 @@ public class TextServicesManagerService extends ITextServicesManager.Stub {
             Slog.w(TAG, "setCurrentSpellCheckerSubtype: " + hashCode);
         }
         final SpellCheckerInfo sci = getCurrentSpellChecker(null);
+        int nIndex = 0; // AIM_Android 2.1.1
         int tempHashCode = 0;
         for (int i = 0; sci != null && i < sci.getSubtypeCount(); ++i) {
             if(sci.getSubtypeAt(i).hashCode() == hashCode) {
                 tempHashCode = hashCode;
+                nIndex = i; // AIM_Android 2.1.1
                 break;
             }
         }
         final long ident = Binder.clearCallingIdentity();
         try {
             mSettings.putSelectedSpellCheckerSubtype(tempHashCode);
+            // AIM_Android 2.1.1 +++
+            if (tempHashCode == 0)
+                SystemProperties.set("persist.lang.spell.lang","-1");   
+            else
+                SystemProperties.set("persist.lang.spell.lang",String.valueOf(nIndex));
+            // AIM_Android 2.1.1 ---
         } finally {
             Binder.restoreCallingIdentity(ident);
         }
