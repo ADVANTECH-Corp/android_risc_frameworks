@@ -70,6 +70,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import android.os.SystemProperties; // AIM_Android 2.1.1
+
 public class TextServicesManagerService extends ITextServicesManager.Stub {
     private static final String TAG = TextServicesManagerService.class.getSimpleName();
     private static final boolean DBG = false;
@@ -1076,6 +1078,12 @@ public class TextServicesManagerService extends ITextServicesManager.Stub {
         public void setSpellCheckerEnabled(boolean enabled) {
             Settings.Secure.putIntForUser(mResolver,
                     Settings.Secure.SPELL_CHECKER_ENABLED, enabled ? 1 : 0, mCurrentUserId);
+            // AIM_Android 2.1.1 +++
+            if (enabled)
+                SystemProperties.set("persist.lang.spell.enable","true");
+            else
+                SystemProperties.set("persist.lang.spell.enable","false");
+            // AIM_Android 2.1.1 ---
         }
 
         public String getSelectedSpellChecker() {
@@ -1089,8 +1097,17 @@ public class TextServicesManagerService extends ITextServicesManager.Stub {
         }
 
         public boolean isSpellCheckerEnabled() {
-            return Settings.Secure.getIntForUser(mResolver,
+            // AIM_Android 2.1.1 +++
+            String strSpellEnable = SystemProperties.get("persist.lang.spell.enable");
+            
+            if (strSpellEnable.equals(""))
+                return Settings.Secure.getIntForUser(mResolver,
                     Settings.Secure.SPELL_CHECKER_ENABLED, 1, mCurrentUserId) == 1;
+            else if (strSpellEnable.equals("false"))
+                return false;
+            else
+                return true;
+            // AIM_Android 2.1.1 ---
         }
     }
 
