@@ -2648,10 +2648,16 @@ class DatabaseHelper extends SQLiteOpenHelper {
                 loadSetting(stmt, Settings.Global.WIFI_ON, "0");
             else
                 loadSetting(stmt, Settings.Global.WIFI_ON, "1");
-            // AIM_Android 2.1.1 ---
 
-            loadBooleanSetting(stmt, Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON,
-                    R.bool.def_networks_available_notification_on);
+            String strNetNotif = SystemProperties.get("persist.wifi.net_notif");
+            if (strNetNotif.equals(""))
+                loadBooleanSetting(stmt, Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON,
+                     R.bool.def_networks_available_notification_on);
+            else if (strNetNotif.equals("false"))
+                loadSetting(stmt, Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON, "0");
+            else
+                loadSetting(stmt, Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON, "1");
+            // AIM_Android 2.1.1 ---
 
             loadBooleanSetting(stmt, Settings.Global.BLUETOOTH_ON,
                     R.bool.def_bluetooth_on);
