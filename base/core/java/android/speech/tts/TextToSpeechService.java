@@ -46,6 +46,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Set;
 
+import android.os.SystemProperties; // AIM_Android 2.1.1
+
 
 /**
  * Abstract base class for TTS engine implementations. The following methods
@@ -408,7 +410,11 @@ public abstract class TextToSpeechService extends Service {
     }
 
     private int getDefaultSpeechRate() {
-        return getSecureSettingInt(Settings.Secure.TTS_DEFAULT_RATE, Engine.DEFAULT_RATE);
+        // AIM_Android 2.1.1 +++
+        int nRate = getSecureSettingInt(Settings.Secure.TTS_DEFAULT_RATE, Engine.DEFAULT_RATE);
+        nRate = SystemProperties.getInt("persist.lang.tts.rate", nRate);
+        return nRate;
+        // AIM_Android 2.1.1 ---
     }
 
     private String[] getSettingsLocale() {
