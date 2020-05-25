@@ -49,6 +49,7 @@ import android.view.WindowInsets;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
+import android.os.SystemProperties;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
@@ -874,6 +875,9 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(mStatusBarState == StatusBarState.SHADE && !SystemProperties.getBoolean("persist.qsm", true)){
+            return false;
+        }
         if (mBlockTouches || (mQs != null && mQs.isCustomizing())) {
             return false;
         }

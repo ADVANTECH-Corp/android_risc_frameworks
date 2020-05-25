@@ -4886,8 +4886,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         if (mNavigationBarPosition == NAV_BAR_BOTTOM) {
             // It's a system nav bar or a portrait screen; nav bar goes on bottom.
-            final int top = cutoutSafeUnrestricted.bottom
+            int top = cutoutSafeUnrestricted.bottom
                     - getNavigationBarHeight(rotation, uiMode);
+	    if (!SystemProperties.getBoolean("persist.navbar", true)){
+                top = cutoutSafeUnrestricted.bottom;
+            }
             mTmpNavigationFrame.set(0, top, displayWidth, displayFrames.mUnrestricted.bottom);
             displayFrames.mStable.bottom = displayFrames.mStableFullscreen.bottom = top;
             if (transientNavBarShowing) {
@@ -4909,8 +4912,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         } else if (mNavigationBarPosition == NAV_BAR_RIGHT) {
             // Landscape screen; nav bar goes to the right.
-            final int left = cutoutSafeUnrestricted.right
+            int left = cutoutSafeUnrestricted.right
                     - getNavigationBarWidth(rotation, uiMode);
+	    if (!SystemProperties.getBoolean("persist.navbar", true)){
+                left = cutoutSafeUnrestricted.right;
+            }
             mTmpNavigationFrame.set(left, 0, displayFrames.mUnrestricted.right, displayHeight);
             displayFrames.mStable.right = displayFrames.mStableFullscreen.right = left;
             if (transientNavBarShowing) {
